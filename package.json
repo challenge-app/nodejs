@@ -1,0 +1,10 @@
+{
+	"name": "challenge",
+	"description": "Challenge your friends",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"express": "3.x",
+		"mongodb": "1.2.x"
+	}
+}
