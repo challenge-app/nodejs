@@ -21,11 +21,11 @@ app.get('/', docs.showDocs);
 
 app.get('/user', user.findMe);
 app.get('/user/logout', user.unAuth);
-
-app.post('/user/:id/auth', user.auth);
-
 app.get('/user/:id', user.findById);
+
+app.post('/user/auth', user.auth);
 app.post('/user', user.addUser);
+
 app.put('/user/:id', user.updateUser);
 app.delete('/user/:id', user.deleteUser);
  
