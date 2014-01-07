@@ -22,18 +22,30 @@ db.open(function(err, db) {
 
 exports.auth = function(req, res) {
 
-    var id = req.params.id;
     var user = req.body;
 
-    console.log('Authenticating: ' + id);
-
     db.collection('user', function(err, collection) {
-        collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, item) {
+
+        if(user.email === undefined)
+        {
+            var response = {};
+
+            response.error = "Give me an email!";
+
+            res.status(400).send(response);
+        }
+
+        collection.findOne({ email : user.email }, function(err, item) {
 
             var response = {};
             var invalid = false;
 
-            if(user.password === undefined)
+            if(item === null)
+            {
+                response.error = "User not found!";
+                invalid = true;
+            }
+            else if(user.password === undefined)
             {
                 response.error = "Need a password!";
                 invalid = true;
@@ -56,7 +68,6 @@ exports.auth = function(req, res) {
                 req.session.user = item;
                 res.send(item);
             }
-
         });
     });
 };
@@ -126,6 +137,22 @@ exports.findAll = function(req, res) {
     });
 };
  
+exports.deleteAll = function(req, res) {
+    db.collection('user', function(err, collection) {
+        collection.find().toArray(function(err, items) {
+
+            for(var i in items)
+            {
+                collection.remove({'_id':new BSON.ObjectID(items[i]._id)}, {safe:true}, function(err, result) {
+                });
+            }
+
+            res.send("OK");
+
+        });
+    });
+};
+ 
 exports.addUser = function(req, res) {
 
     var user = req.body;
@@ -147,24 +174,35 @@ exports.addUser = function(req, res) {
             invalid = true;
         }
 
-        if(invalid)
-        {
-            res.status(400).send(response);
-            console.log('Error: invalid request "'+response+'"');
-        }
-        else
-        {
-            user.password = bcrypt.hashSync(user.password, 12);
+        collection.findOne({ email : user.email }, function(err, item) {
 
-            collection.insert(user, {safe:true}, function(err, result) {
-                if (err) {
-                    res.send({'error':'An error has occurred'});
-                } else {
-                    console.log('Success: ' + JSON.stringify(result[0]));
-                    res.send(result[0]);
-                }
-            });
-        }
+            if(item !== null)
+            {
+                response.error = "User already exists!";
+                invalid = true;
+            }
+
+            if(invalid)
+            {
+                res.status(400).send(response);
+                console.log('Error: invalid request "'+response+'"');
+            }
+            else
+            {
+                res.status(400).send("OO");
+                user.password = bcrypt.hashSync(user.password, 12);
+
+                collection.insert(user, {safe:true}, function(err, result) {
+                    if (err) {
+                        res.send({'error':'An error has occurred'});
+                    } else {
+                        console.log('Success: ' + JSON.stringify(result[0]));
+                        res.send(result[0]);
+                    }
+                });
+            }
+
+        });
     });
 }
  
