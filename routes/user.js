@@ -173,7 +173,6 @@ exports.addUser = function(req, res) {
             }
             else
             {
-                res.status(400).send("OO");
                 user.password = bcrypt.hashSync(user.password, 12);
 
                 collection.insert(user, {safe:true}, function(err, result) {
