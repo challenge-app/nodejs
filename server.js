@@ -13,12 +13,11 @@ app.configure(function () {
  
 app.get('/user', user.findMe);
 app.get('/user/logout', user.unAuth);
+app.get('/user/:id', user.findById);
 
 app.post('/user/auth', user.auth);
-
-app.get('/user/deleteAll', user.deleteAll);
-app.get('/user/:id', user.findById);
 app.post('/user', user.addUser);
+
 app.put('/user/:id', user.updateUser);
 app.delete('/user/:id', user.deleteUser);
  

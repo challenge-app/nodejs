@@ -59,7 +59,7 @@ exports.auth = function(req, res) {
             if(invalid)
             {
                 res.status(400).send(response);
-                console.log('Error: invalid request "'+response+'"');
+                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
             }
             else
             {
@@ -97,7 +97,7 @@ exports.findMe = function(req, res) {
     if(invalid)
     {
         res.status(400).send(response);
-        console.log('Error: invalid request "'+response+'"');
+        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
     }
     else
     {
@@ -126,28 +126,12 @@ exports.findAll = function(req, res) {
     db.collection('user', function(err, collection) {
         collection.find().toArray(function(err, items) {
 
-            /*for(var i in items)
-            {
-                items[i].password = 'protected';
-            }*/
-
-            res.send(items);
-
-        });
-    });
-};
- 
-exports.deleteAll = function(req, res) {
-    db.collection('user', function(err, collection) {
-        collection.find().toArray(function(err, items) {
-
             for(var i in items)
             {
-                collection.remove({'_id':new BSON.ObjectID(items[i]._id)}, {safe:true}, function(err, result) {
-                });
+                items[i].password = 'protected';
             }
 
-            res.send("OK");
+            res.send(items);
 
         });
     });
@@ -185,7 +169,7 @@ exports.addUser = function(req, res) {
             if(invalid)
             {
                 res.status(400).send(response);
-                console.log('Error: invalid request "'+response+'"');
+                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
             }
             else
             {
@@ -258,7 +242,7 @@ exports.updateUser = function(req, res) {
             if(invalid)
             {
                 res.status(400).send(response);
-                console.log('Error: invalid request "'+response.error+'"');
+                console.log('Error: invalid request "'+JSON.stringify(response).error+'"');
             }
             else
             {
