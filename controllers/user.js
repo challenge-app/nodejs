@@ -143,6 +143,8 @@ exports.auth = function(req, res) {
 
     var user = req.body;
 
+    console.log(user);
+
     if(user.email === undefined)
     {
         var response = {};
