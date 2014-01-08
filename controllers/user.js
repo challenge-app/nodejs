@@ -73,7 +73,7 @@ exports.auth = function(req, res) {
 
         if(invalid)
         {
-            res.status(400).send(response);
+            res.status(status).send(response);
             console.log('Error: invalid request "'+JSON.stringify(response)+'"');
         }
         else
