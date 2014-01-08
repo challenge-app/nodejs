@@ -52,10 +52,12 @@ exports.auth = function(req, res) {
 
         var response = {};
         var invalid = false;
+        var status = 400;
 
         if(item === null)
         {
             response.error = "User not found!";
+            status = 422;
             invalid = true;
         }
         else if(user.password === undefined)
