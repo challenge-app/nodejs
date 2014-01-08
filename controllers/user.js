@@ -334,6 +334,7 @@ exports.addUser = function(req, res) {
 
                 newUser.save(function(err, data)
                 {
+                    data.password = "protected";
                     res.status(200).send(data);
                 });
             }
