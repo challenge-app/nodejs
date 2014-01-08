@@ -1,12 +1,21 @@
+/*
+ * EXTENSIONS
+ */
 var mongo       = require('mongodb'),
     bcrypt      = require('bcrypt'),
     mongoose    = require('mongoose'),
     userModel   = require('../models/user'),
     friendModel = require('../models/friend');
 
+/*
+ * MODELS
+ */
 var User    = userModel.getUserModel(),
     Friend  = friendModel.getFriendModel();
 
+/*
+ * DATABASE SETUP
+ */
 mongoose.connect('mongodb://localhost/challenge');
 
 var db = mongoose.connection;
@@ -16,6 +25,13 @@ db.once('open', function callback () {
     console.log('LOAD: Mongoose!');
 });
 
+/*
+ * [POST] ADD A NEW FRIEND
+ * (need to be authed) 
+ *
+ * @param String email
+ * @return Friend data
+ */
 exports.addFriend = function(req, res) {
 
     var user = req.body;
@@ -26,7 +42,7 @@ exports.addFriend = function(req, res) {
 
     if(req.session.user === undefined)
     {
-        response.error = "unauthorized";
+        response.error = "Please sign-in!";
         invalid = true;
         status = 401;
     }
@@ -44,9 +60,9 @@ exports.addFriend = function(req, res) {
     }
     else
     {
-        User.findOne({ _id : user._id }).exec(function(err, friend)
+        User.findOne({ _id : user._id }).exec(function(err, friendUser)
         {
-            if(friend === null)
+            if(friendUser === null)
             {
                 response.error = "User not found!";
 
@@ -55,33 +71,22 @@ exports.addFriend = function(req, res) {
             }
             else
             {
-                Friend.findOne({ userId : req.session.user._id }).exec(function(err, hisFriends)
+                Friend.findOne({ userId : req.session.user._id }).exec(function(err, currUserFriends)
                 {
-                    if(hisFriends === null)
+                    currUserFriends.friends.push(friendUser._id);
+
+                    currUserFriends.save(function(err, data)
                     {
-                        var add = new Array();
-
-                        add.push(friend._id);
-
-                        var hisFriends = new Friend({
-                            userId : req.session.user._id,
-                            friends : add
-                        });
-
-                        hisFriends.save(function(err, data)
+                        Friend.findOne({ userId : friendUser._id }).exec(function(err, friendUserFriends)
                         {
-                            res.send(data);
-                        });
-                    }
-                    else
-                    {
-                        hisFriends.friends.push(friend._id);
+                            friendUserFriends.friends.push(req.session.user._id);
 
-                        hisFriends.save(function(err, data)
-                        {
-                            res.send(data);
+                            friendUserFriends.save(function(err, data2)
+                            {
+                                res.send(data);
+                            });
                         });
-                    }
+                    });
                 });
             }
         });
@@ -89,6 +94,12 @@ exports.addFriend = function(req, res) {
 
 }
 
+/*
+ * [GET] GET USER FRIENDS
+ * (need to be authed) 
+ *
+ * @return Friends data
+ */
 exports.getFriends = function(req, res) {
 
     var response = {};
@@ -97,7 +108,7 @@ exports.getFriends = function(req, res) {
 
     if(req.session.user === undefined)
     {
-        response.error = "unauthorized";
+        response.error = "Please sign-in!";
         invalid = true;
         status = 401;
     }
@@ -139,6 +150,13 @@ exports.getFriends = function(req, res) {
 
 }
 
+/*
+ * [POST] AUTH A USER
+ *
+ * @param String email
+ * @param String password
+ * @return Friends data
+ */
 exports.auth = function(req, res) {
 
     var user = req.body;
@@ -196,6 +214,9 @@ exports.auth = function(req, res) {
 
 }
 
+/*
+ * [GET] UNAUTH A USER
+ */
 exports.unAuth = function(req, res) {
 
     var response = {};
@@ -207,6 +228,12 @@ exports.unAuth = function(req, res) {
     res.status(200).send(response);
 }
 
+/*
+ * [GET] GET CURRENT USER
+ * (user need to be authed)
+ *
+ * @return User me
+ */
 exports.findMe = function(req, res) {
 
     var response = {};
@@ -214,7 +241,7 @@ exports.findMe = function(req, res) {
 
     if(req.session.user === undefined)
     {
-        response.error = "unauthorized";
+        response.error = "Please sign-in!";
         invalid = true;
     }
 
@@ -230,6 +257,12 @@ exports.findMe = function(req, res) {
    
 };
 
+/*
+ * [GET] FIND A USER BY ID
+ *
+ * @param String _id
+ * @return User data
+ */
 exports.findById = function(req, res) {
 
     var id = req.params.id;
@@ -253,6 +286,12 @@ exports.findById = function(req, res) {
     });
 };
 
+/*
+ * [POST] FIND A USER BY EMAIL
+ *
+ * @param String email
+ * @return User data
+ */
 exports.find = function(req, res) {
 
     var data        = req.body,
@@ -289,6 +328,11 @@ exports.find = function(req, res) {
     }
 }
  
+/*
+ * [GET] FIND ALL USERS
+ *=
+ * @return Users data
+ */
 exports.findAll = function(req, res) {
 
     User.find(function (err, users) {
@@ -303,6 +347,13 @@ exports.findAll = function(req, res) {
     });
 };
  
+/*
+ * [POST] CREATE A NEW USER
+ *
+ * @param String email
+ * @param String password
+ * @return User data
+ */
 exports.addUser = function(req, res) {
 
     var user        = req.body,
@@ -341,8 +392,18 @@ exports.addUser = function(req, res) {
 
                 newUser.save(function(err, data)
                 {
-                    data.password = "protected";
-                    res.status(200).send(data);
+                    var ff = new Array();
+
+                    var newFriends = new Friend({
+                        userId : data._id,
+                        friends : ff
+                    });
+
+                    newFriends.save(function(err, data2)
+                    {
+                        data.password = "protected";
+                        res.status(200).send(data);
+                    });
                 });
             }
             else
@@ -355,63 +416,28 @@ exports.addUser = function(req, res) {
             }
         }
     });
+}
+
+exports.deleteAll = function(req, res) {
+
+    User.find(function (err, users) {
+        
+        for(var i in users)
+        {
+            users[i].remove();
+        }
+
+    });
+
 }
 
 /*
-exports.addUser = function(req, res) {
-
-    var user = req.body;
-    console.log('Adding user: ' + JSON.stringify(user));
-
-    db.collection('user', function(err, collection) {
-
-        var status = 400;
-        var invalid = false;
-        var response = {};
-
-        if(user.email === undefined)
-        {
-            response.error = "I need an email!";
-            invalid = true;
-        }
-        else if(user.password === undefined)
-        {
-            response.error = "I need a password!";
-            invalid = true;
-        }
-
-        collection.findOne({ email : user.email }, function(err, item) {
-
-            if(item !== null)
-            {
-                response.error = "User already exists!";
-                status = 422;
-                invalid = true;
-            }
-
-            if(invalid)
-            {
-                res.status(status).send(response);
-                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-            }
-            else
-            {
-                user.password = bcrypt.hashSync(user.password, 12);
-
-                collection.insert(user, {safe:true}, function(err, result) {
-                    if (err) {
-                        res.send({'error':'An error has occurred'});
-                    } else {
-                        console.log('Success: ' + JSON.stringify(result[0]));
-                        res.send(result[0]);
-                    }
-                });
-            }
-
-        });
-    });
-}
-*/
+ * [PUT] UPDATE A USER
+ *
+ * @param String email OPT
+ * @param String password OPT
+ * @return User data
+ */
 exports.updateUser = function(req, res) {
 
     var id = req.params.id;
@@ -486,6 +512,12 @@ exports.updateUser = function(req, res) {
     });
 }
  
+/*
+ * [DELETE] DELETE A USER
+ *
+ * @param String _id
+ * @param String password
+ */
 exports.deleteUser = function(req, res) {
     var id = req.params.id;
     console.log('Deleting user: ' + id);
@@ -500,19 +532,3 @@ exports.deleteUser = function(req, res) {
         });
     });
 }
-
-var populateDB = function() {
- 
-    var user = [
-    {
-        email: "mcgiordalp@gmail.com",
-        password: bcrypt.hashSync("6uwgqj9w", 12)
-    }];
- 
-    db.collection('user', function(err, collection) {
-        collection.insert(user, {safe:true}, function(err, result) {});
-
-        console.log(user);
-    });
- 
-};
