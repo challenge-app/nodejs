@@ -1,7 +1,7 @@
 var express = require('express'),
-    user 	= require('./routes/user'),
-    docs 	= require('./routes/docs'),
-	app 	= express();
+    user 	= require('./controllers/user'),
+    docs 	= require('./controllers/docs'),
+		app 	= express();
 
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
