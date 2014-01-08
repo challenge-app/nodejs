@@ -47,8 +47,9 @@ app.get('/', docs.showDocs);
 app.get('/user', user.findAll);
 app.get('/user/logout', user.unAuth);
 app.get('/user/friends', user.getFriends);
-app.get('/user/:id', user.findById);
 app.get('/user/deleteAll', user.deleteAll);
+
+app.get('/user/:id', user.findById);
 
 /*
  * POST ROUTES
