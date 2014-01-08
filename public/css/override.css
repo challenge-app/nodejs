@@ -1,0 +1,75 @@
+body {
+	padding-top: 60px;
+}
+
+.nav-pills {
+	background-color: #f5f5f5;
+}
+
+.nav-fixed {
+	position: fixed;
+}
+
+.brand {
+	text-align: center;
+	float: none !important;
+}
+
+p.obs {
+	font-style: italic;
+	color: #444;
+	background-color: #eee;
+	border-radius: 10px;
+	padding: 5px;
+	display: inline-block;
+}
+
+code {
+	font-size: 14px;
+	font-weight: bold;
+	color: #e74c3c;
+}
+
+code.supper {
+	font-size: 20px;
+}
+
+code.normal {
+	font-weight: normal;
+	color: #3498db;
+}
+
+.blue {
+	color: #3498db;
+}
+
+l {
+	text-decoration: underline;
+}
+
+thead td {
+	font-weight: bold;
+}
+
+.blockcode {
+	margin-bottom: 15px;
+	padding: 2px 4px;
+	border-radius: 3px;
+	background-color: #f7f7f9;
+	border: 1px solid #e1e1e8;
+	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+}
+
+span.type {
+	color: #e67e22;
+}
+
+.blockcode.json p {
+	margin: 0px;
+	padding-left: 40px;
+}
+
+.blockcode.json p:first-child,
+.blockcode.json p:last-child {
+	padding: 0px;
+}

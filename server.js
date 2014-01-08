@@ -3,7 +3,9 @@ var express = require('express'),
     docs 	= require('./controllers/docs'),
 		app 	= express();
 
-app.set('views', __dirname + '/views');
+app.set('/views', express.static(__dirname + '/views'));
+app.use(express.static(__dirname + '/public'));
+
 app.engine('html', require('ejs').renderFile);
 
 app.use(express.cookieParser());
@@ -19,7 +21,7 @@ app.locals.title = 'Challenges';
  
 app.get('/', docs.showDocs);
 
-app.get('/user', user.findAll);
+app.get('/user', user.findMe);
 app.get('/user/logout', user.unAuth);
 app.get('/user/friends', user.getFriends);
 app.get('/user/:id', user.findById);

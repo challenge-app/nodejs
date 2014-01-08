@@ -1,8 +1,8 @@
 var mongo       = require('mongodb'),
     bcrypt      = require('bcrypt'),
     mongoose    = require('mongoose'),
-    userModel   = require('../models/user.js'),
-    friendModel = require('../models/friend.js');
+    userModel   = require('../models/user'),
+    friendModel = require('../models/friend');
 
 var User    = userModel.getUserModel(),
     Friend  = friendModel.getFriendModel();
@@ -34,7 +34,7 @@ exports.addFriend = function(req, res) {
     {
         response.error = "Give me an id!";
         invalid = true;
-        status = 401;
+        status = 400;
     }
 
     if(invalid)
@@ -240,9 +240,16 @@ exports.findById = function(req, res) {
         if(user != null)
         {
             user.password = "protected";
-        }
 
-        res.send(user);
+            res.send(user);
+        }
+        else
+        {
+            var response = {};
+
+            response.error = "User not found!";
+            res.status(422).send(response);
+        }
     });
 };
 
