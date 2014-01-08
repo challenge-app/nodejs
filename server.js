@@ -19,11 +19,14 @@ app.locals.title = 'Challenges';
  
 app.get('/', docs.showDocs);
 
-app.get('/user', user.findMe);
+app.get('/user', user.findAll);
 app.get('/user/logout', user.unAuth);
+app.get('/user/friends', user.getFriends);
 app.get('/user/:id', user.findById);
 
+app.post('/user/friend', user.addFriend);
 app.post('/user/auth', user.auth);
+app.post('/user/find', user.find);
 app.post('/user', user.addUser);
 
 app.put('/user/:id', user.updateUser);

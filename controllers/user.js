@@ -1,9 +1,11 @@
 var mongo       = require('mongodb'),
     bcrypt      = require('bcrypt'),
     mongoose    = require('mongoose'),
-    userModel   = require('../models/user.js');
+    userModel   = require('../models/user.js'),
+    friendModel = require('../models/friend.js');
 
-var User = userModel.getUserModel();
+var User    = userModel.getUserModel(),
+    Friend  = friendModel.getFriendModel();
 
 mongoose.connect('mongodb://localhost/challenge');
 
@@ -14,24 +16,128 @@ db.once('open', function callback () {
     console.log('LOAD: Mongoose!');
 });
 
-/*var Server = mongo.Server,
-    Db = mongo.Db,
-    BSON = mongo.BSONPure;
- 
-var server = new Server('localhost', 27017, {auto_reconnect: true});
-db = new Db('user', server);
- 
-db.open(function(err, db) {
-    if(!err) {
-        console.log("Connected to 'user' database");
-        db.collection('user', {strict:true}, function(err, collection) {
-            if (err) {
-                console.log("The 'user' collection doesn't exist. Creating it with sample data...");
-                populateDB();
+exports.addFriend = function(req, res) {
+
+    var user = req.body;
+
+    var response = {};
+    var invalid = false;
+    var status = 400;
+
+    if(req.session.user === undefined)
+    {
+        response.error = "unauthorized";
+        invalid = true;
+        status = 401;
+    }
+    else if(user._id === undefined)
+    {
+        response.error = "Give me an id!";
+        invalid = true;
+        status = 401;
+    }
+
+    if(invalid)
+    {
+        res.status(status).send(response);
+        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+    }
+    else
+    {
+        User.findOne({ _id : user._id }).exec(function(err, friend)
+        {
+            if(friend === null)
+            {
+                response.error = "User not found!";
+
+                res.status(422).send(response);
+                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+            }
+            else
+            {
+                Friend.findOne({ userId : req.session.user._id }).exec(function(err, hisFriends)
+                {
+                    if(hisFriends === null)
+                    {
+                        var add = new Array();
+
+                        add.push(friend._id);
+
+                        var hisFriends = new Friend({
+                            userId : req.session.user._id,
+                            friends : add
+                        });
+
+                        hisFriends.save(function(err, data)
+                        {
+                            res.send(data);
+                        });
+                    }
+                    else
+                    {
+                        hisFriends.friends.push(friend._id);
+
+                        hisFriends.save(function(err, data)
+                        {
+                            res.send(data);
+                        });
+                    }
+                });
             }
         });
     }
-});*/
+
+}
+
+exports.getFriends = function(req, res) {
+
+    var response = {};
+    var invalid = false;
+    var status = 400;
+
+    if(req.session.user === undefined)
+    {
+        response.error = "unauthorized";
+        invalid = true;
+        status = 401;
+    }
+
+    if(invalid)
+    {
+        res.status(status).send(response);
+        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+    }
+    else
+    {
+        Friend.findOne({userId : req.session.user._id}, function(err, data)
+        {
+            if(data === null)
+            {
+                res.send(null);
+            }
+            else
+            {
+                User.where('_id').in(data.friends).exec(function(err, users)
+                {
+                    if(users === null)
+                    {
+                        res.send({});
+                    }
+                    else
+                    {
+                        for(var i in users)
+                        {
+                            users[i].password = "protected";
+                        }
+
+                        res.send(users);
+                    }
+                });
+            }
+        });
+    }
+
+}
 
 exports.auth = function(req, res) {
 
@@ -87,59 +193,6 @@ exports.auth = function(req, res) {
     });
 
 }
-/*
-exports.auth = function(req, res) {
-
-    var user = req.body;
-
-    db.collection('user', function(err, collection) {
-
-        if(user.email === undefined)
-        {
-            var response = {};
-
-            response.error = "Give me an email!";
-
-            res.status(400).send(response);
-        }
-
-        collection.findOne({ email : user.email }, function(err, item) {
-
-            var response = {};
-            var invalid = false;
-
-            if(item === null)
-            {
-                response.error = "User not found!";
-                invalid = true;
-            }
-            else if(user.password === undefined)
-            {
-                response.error = "Need a password!";
-                invalid = true;
-            }
-            else if(!bcrypt.compareSync(user.password, item.password))
-            {
-                response.error = "Password incorrect!";
-                invalid = true;
-            }
-
-            if(invalid)
-            {
-                res.status(400).send(response);
-                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-            }
-            else
-            {
-                item.password = "protected";
-
-                req.session.user = item;
-                res.send(item);
-            }
-        });
-    });
-};
-*/
 
 exports.unAuth = function(req, res) {
 
@@ -165,7 +218,7 @@ exports.findMe = function(req, res) {
 
     if(invalid)
     {
-        res.status(400).send(response);
+        res.status(401).send(response);
         console.log('Error: invalid request "'+JSON.stringify(response)+'"');
     }
     else
@@ -180,16 +233,52 @@ exports.findById = function(req, res) {
     var id = req.params.id;
     console.log('Retrieving user: ' + id);
 
-    db.collection('user', function(err, collection) {
-        collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, item) {
+    User.findOne({_id : id}, function(err, user)
+    {
+        if(user != null)
+        {
+            user.password = "protected";
+        }
 
-            item.password = 'protected';
-
-            res.send(item);
-
-        });
+        res.send(user);
     });
 };
+
+exports.find = function(req, res) {
+
+    var data        = req.body,
+        invalid     = false,
+        response    = {},
+        status      = 400;
+
+    if(data.email === undefined)
+    {
+        response.error = "I need an email!";
+        invalid = true;
+    }
+
+    if(invalid)
+    {
+        res.status(status).send(response);
+        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+    }
+    else
+    {
+        User.findOne({ email : data.email }, function(err, user)
+        {
+            if(user == null)
+            {
+                response.error = "User not found!";
+                res.status(422).send(response);
+            }
+            else
+            {
+                user.password = "protected";
+                res.send(user);
+            }
+        });
+    }
+}
  
 exports.findAll = function(req, res) {
 
@@ -203,18 +292,6 @@ exports.findAll = function(req, res) {
             res.status(200).send(users);
         }
     });
-    /*db.collection('user', function(err, collection) {
-        collection.find().toArray(function(err, items) {
-
-            for(var i in items)
-            {
-                items[i].password = 'protected';
-            }
-
-            res.send(items);
-
-        });
-    });*/
 };
  
 exports.addUser = function(req, res) {
