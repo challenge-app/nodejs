@@ -35,7 +35,7 @@ app.use(express.static(__dirname + '/public'));
  * FOR SESSIONS!
  */
 app.use(express.cookieParser());
-app.use(express.session({secret: '1234567890QWERTY'}));
+app.use(express.cookieSession({secret: '1234567890QWERTY'}));
 
 /*
  * CONFIGURING THE APP
@@ -55,7 +55,7 @@ app.get('/', docs.showDocs);
 /*
  * USER GET ROUTES
  */
-app.get('/user', user.findAll);
+app.get('/user', user.findMe);
 app.get('/user/logout', user.unAuth);
 app.get('/user/friends', user.getFriends);
 app.get('/user/deleteAll', user.deleteAll);
