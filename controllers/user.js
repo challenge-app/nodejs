@@ -92,7 +92,9 @@ exports.getFriends = function(req, res) {
     var invalid = false;
     var status = 400;
 
-    if(req.session.user === undefined)
+    var reqToken = req.header('X-AUTH-TOKEN');
+
+    if(reqToken === undefined)
     {
         response.error = "Please sign-in!";
         invalid = true;
@@ -106,28 +108,41 @@ exports.getFriends = function(req, res) {
     }
     else
     {
-        Friend.findOne({userId : req.session.user._id}, function(err, data)
+        User.findOne({token : reqToken}, function(err, user)
         {
-            if(data === null)
+
+            if(user === null)
             {
-                res.send(null);
+                response.error = "Please sign-in!";
+                status = 401;
+                res.status(status).send(response);
             }
             else
-            {
-                User.where('_id').in(data.friends).exec(function(err, users)
+            {             
+                Friend.findOne({userId : user._id}, function(err, data)
                 {
-                    if(users === null)
+                    if(data === null)
                     {
-                        res.send({});
+                        res.send(null);
                     }
                     else
                     {
-                        for(var i in users)
+                        User.where('_id').in(data.friends).exec(function(err, users)
                         {
-                            users[i].password = "protected";
-                        }
+                            if(users === null)
+                            {
+                                res.send({});
+                            }
+                            else
+                            {
+                                for(var i in users)
+                                {
+                                    users[i].password = "protected";
+                                }
 
-                        res.send(users);
+                                res.send(users);
+                            }
+                        });
                     }
                 });
             }
@@ -146,8 +161,6 @@ exports.getFriends = function(req, res) {
 exports.auth = function(req, res) {
 
     var user = req.body;
-
-    console.log(user);
 
     if(user.email === undefined)
     {
@@ -190,10 +203,15 @@ exports.auth = function(req, res) {
         }
         else
         {
-            item.password = "protected";
+            var timestamp = (new Date().getTime()).toString();
 
-            req.session.user = item;
-            res.send(item);
+            item.token = bcrypt.hashSync(timestamp+item.email,12);
+
+            item.save(function(err, item)
+            {
+                item.password = "protected";
+                res.send(item);
+            });
         }
 
     });
