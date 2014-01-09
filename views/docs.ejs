@@ -34,6 +34,9 @@
 						<li data-trigger="user-model">
 							<a href="#"><i class="icon-chevron-right"></i> User</a>
 						</li>
+						<li data-trigger="friend-model">
+							<a href="#"><i class="icon-chevron-right"></i> Friend</a>
+						</li>
 					</ul>
 				</div>
 				<div class="span3"></div>
@@ -60,17 +63,20 @@
 								<table class="table table-bordered table-stripped">
 									<thead>
 										<td>Parameters</td>
+										<td>Headers</td>
 										<td>Status code</td>
 										<td>Return</td>
 									</thead>
 									<tbody>
 										<tr class="error">
 											<td></td>
+											<td></td>
 											<td>401 Unauthorized</td>
 											<td><code class="normal">{ error : "Please sign-in!" }</code></td>
 										</tr>
 										<tr class="success">
 											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
 											<td>200 OK</td>
 											<td><a href="#" data-trigger="user-model">User</a></td>
 										</tr>
@@ -257,7 +263,7 @@
 									<p>[POST] URL /user/auth</p>
 									<p>PARAMETERS { "email" : "teste@teste.com", "password" : "123" }</p>
 									<p>STATUS 200 OK</p>
-									<p>{ "email": "teste@teste.com", "password": "protected", "_id": "52cc9cd3515aeb4d1554de49", "__v": 0 }</p>
+									<p>{ "authenticationToken": "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O", "email": "teste@teste.com", "password": "protected", "_id": "52cc9cd3515aeb4d1554de49", "__v": 0 }</p>
 								</div>
 							</div>
 							<hr/>
@@ -267,15 +273,18 @@
 									<code class="supper">/logout</code>
 								</p>
 								<p>Will try to unauth a <a href="#" data-trigger="user-model">User</a>.</p>
+								<p class="important">You need to pass <code>X-AUTH-TOKEN</code> in headers, otherwise it will still be valid the current token!</p>
 								<table class="table table-bordered table-stripped">
 									<thead>
 										<td>Parameters</td>
+										<td>Headers</td>
 										<td>Status code</td>
 										<td>Return</td>
 									</thead>
 									<tbody>
 										<tr class="success">
 											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
 											<td>200 OK</td>
 											<td><code class="normal">{ message : "You are out!" }</code></td>
 										</tr>
@@ -292,17 +301,20 @@
 								<table class="table table-bordered table-stripped">
 									<thead>
 										<td>Parameters</td>
+										<td>Headers</td>
 										<td>Status code</td>
 										<td>Return</td>
 									</thead>
 									<tbody>
 										<tr class="error">
 											<td></td>
+											<td></td>
 											<td>401 Unauthorized</td>
 											<td><code class="normal">{ error : "Please sign-in!" }</code></td>
 										</tr>
 										<tr class="success">
 											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
 											<td>200 OK</td>
 											<td><a href="#" data-trigger="user-model">Users</a></td>
 										</tr>
@@ -312,6 +324,7 @@
 								<div class="blockcode">
 									<p>[GET] URL /user/friends</p>
 									<p>PARAMETERS</p>
+									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
 									<p>STATUS 200 OK</p>
 									<p>[ { "email": "friend@teste.com", "password": "protected", "_id": "52cc9cd3515sab4d1554de49", "__v": 0 } ]</p>
 								</div>
@@ -326,27 +339,32 @@
 								<table class="table table-bordered table-stripped">
 									<thead>
 										<td>Parameters</td>
+										<td>Headers</td>
 										<td>Status code</td>
 										<td>Return</td>
 									</thead>
 									<tbody>
 										<tr class="error">
 											<td></td>
+											<td></td>
 											<td>401 Unauthorized</td>
 											<td><code class="normal">{ error : "Please sign-in!" }</code></td>
 										</tr>
 										<tr class="error">
 											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
 											<td>400 Bad request</td>
 											<td><code class="normal">{ error : "Give me an id!" }</code></td>
 										</tr>
 										<tr class="error">
 											<td><code class="normal">$_id</code></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
 											<td>422 Unprocessable entity</td>
 											<td><code class="normal">{ error : "User not found!" }</code></td>
 										</tr>
 										<tr class="success">
 											<td><code class="normal">$_id</code></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
 											<td>200 OK</td>
 											<td><a href="#" data-trigger="user-model">Users</a></td>
 										</tr>
@@ -356,6 +374,7 @@
 								<div class="blockcode">
 									<p>[POST] URL /user/friend</p>
 									<p>PARAMETERS { _id : "52cc9cd3515sab4d1554de49" }</p>
+									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
 									<p>STATUS 200 OK</p>
 									<p>[ { "email": "friend@teste.com", "password": "protected", "_id": "52cc9cd3515sab4d1554de49", "__v": 0 }, { "email": "friend2@teste.com", "password": "protected", "_id": "52cc9cd3515sab4d1554de49", "__v": 0 } ]</p>
 								</div>
@@ -381,6 +400,11 @@
 										<td>User id autogenerated.</td>
 									</tr>
 									<tr>
+										<td><code class="normal">$authenticationToken</code></td>
+										<td><span class="type">String</span></td>
+										<td>User current (valid) token.</td>
+									</tr>
+									<tr>
 										<td><code class="normal">$email</code></td>
 										<td><span class="type">String</span></td>
 										<td>User email (primary key).</td>
@@ -395,9 +419,52 @@
 							<h5>Example</h5>
 							<div class="blockcode json">
 								<p>{</p>
-								<p>_id : "52cc9cd3515sab4d1554de49"</p>
-								<p>email : "teste@teste.com"</p>
+								<p>_id : "52cc9cd3515sab4d1554de49",</p>
+								<p>authenticationToken : "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O",</p>
+								<p>email : "teste@teste.com",</p>
 								<p>password : "protected"</p>
+								<p>}</p>
+							</div>
+						</article>
+					</section>
+					<hr/>
+					<section id="friend-model">
+						<article class="infos">
+							<h2>Friend model</h2>
+							<p>Here you will see the schema for Friend model.</p>
+							<table class="table table-bordered table-stripped">
+								<thead>
+									<td>Parameter</td>
+									<td>Type</td>
+									<td>Description</td>
+								</thead>
+								<tbody>
+									<tr>
+										<td><code class="normal">$_id</code></td>
+										<td><span class="type">String</span></td>
+										<td>Friend id autogenerated.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$userId</code></td>
+										<td><span class="type">String</span></td>
+										<td>Associated user.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$friends</code></td>
+										<td><span class="type">Array</span></td>
+										<td>Friends associated with that user.</td>
+									</tr>
+								</tbody>
+							</table>
+							<h5>Example</h5>
+							<div class="blockcode json">
+								<p>{</p>
+								<p>_id : "52cc9cd3515sab4d1554de49",</p>
+								<p>userId : "54129cd3515sab4d1554df12",</p>
+								<p>friends : {</p>
+								<p class="tab1">_id : "52cc9cd3515sva4d1554de51",</p>
+								<p class="tab1">_id : "51cd5cd3as5svaqd1514de51"</p>
+								<p>}</p>
 								<p>}</p>
 							</div>
 						</article>

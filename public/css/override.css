@@ -73,3 +73,11 @@ span.type {
 .blockcode.json p:last-child {
 	padding: 0px;
 }
+
+p.important {
+	font-weight: bold;
+}
+
+p.tab1 {
+	padding-left: 80px !important;
+}

@@ -12,6 +12,33 @@ var User    = userModel.getUserModel(),
     Friend  = friendModel.getFriendModel();
 
 /*
+ * CHECK AUTH
+ */
+function isAuthenticated(req, callback)
+{
+    var reqToken = req.header('X-AUTH-TOKEN');
+
+    if(reqToken === undefined)
+    {
+        callback(null);
+    }
+    else
+    {
+        User.findOne({authenticationToken : reqToken}, function(err, user)
+        {
+            if(user === null)
+            {
+                callback(null);
+            }
+            else
+            {   
+                callback(user);
+            }
+        });
+    }
+}
+
+/*
  * [POST] ADD A NEW FRIEND
  * (need to be authed) 
  *
@@ -20,63 +47,66 @@ var User    = userModel.getUserModel(),
  */
 exports.addFriend = function(req, res) {
 
-    var user = req.body;
+    var data = req.body;
 
     var response = {};
     var invalid = false;
     var status = 400;
 
-    if(req.session.user === undefined)
+    isAuthenticated(req, function(user)
     {
-        response.error = "Please sign-in!";
-        invalid = true;
-        status = 401;
-    }
-    else if(user._id === undefined)
-    {
-        response.error = "Give me an id!";
-        invalid = true;
-        status = 400;
-    }
-
-    if(invalid)
-    {
-        res.status(status).send(response);
-        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-    }
-    else
-    {
-        User.findOne({ _id : user._id }).exec(function(err, friendUser)
+        if(user == null)
         {
-            if(friendUser === null)
-            {
-                response.error = "User not found!";
+            response.error = "Please sign in!";
+            invalid = true;
+            status = 401;
+        }
+        else if(data._id === undefined)
+        {
+            response.error = "Give me an id!";
+            invalid = true;
+            status = 400;
+        }
 
-                res.status(422).send(response);
-                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-            }
-            else
+        if(invalid)
+        {
+            res.status(status).send(response);
+            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+        }
+        else
+        {
+            User.findOne({ _id : data._id }).exec(function(err, friendUser)
             {
-                Friend.findOne({ userId : req.session.user._id }).exec(function(err, currUserFriends)
+                if(friendUser === null)
                 {
-                    currUserFriends.friends.push(friendUser._id);
+                    response.error = "User not found!";
 
-                    currUserFriends.save(function(err, data)
+                    res.status(422).send(response);
+                    console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+                }
+                else
+                {
+                    Friend.findOne({ userId : user._id }).exec(function(err, currUserFriends)
                     {
-                        Friend.findOne({ userId : friendUser._id }).exec(function(err, friendUserFriends)
-                        {
-                            friendUserFriends.friends.push(req.session.user._id);
+                        currUserFriends.friends.push(friendUser._id);
 
-                            friendUserFriends.save(function(err, data2)
+                        currUserFriends.save(function(err, currUserFriends)
+                        {
+                            Friend.findOne({ userId : friendUser._id }).exec(function(err, friendUserFriends)
                             {
-                                res.send(data);
+                                friendUserFriends.friends.push(user._id);
+
+                                friendUserFriends.save(function(err, ignored)
+                                {
+                                    res.send(currUserFriends);
+                                });
                             });
                         });
                     });
-                });
-            }
-        });
-    }
+                }
+            });
+        }
+    });
 
 }
 
@@ -92,62 +122,52 @@ exports.getFriends = function(req, res) {
     var invalid = false;
     var status = 400;
 
-    var reqToken = req.header('X-AUTH-TOKEN');
-
-    if(reqToken === undefined)
+    isAuthenticated(req, function(user)
     {
-        response.error = "Please sign-in!";
-        invalid = true;
-        status = 401;
-    }
-
-    if(invalid)
-    {
-        res.status(status).send(response);
-        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-    }
-    else
-    {
-        User.findOne({token : reqToken}, function(err, user)
+        if(user == null)
         {
+            response.error = "Please sign-in!";
+            status = 401
+            invalid = true;
+        }
 
-            if(user === null)
+        if(invalid)
+        {
+            res.status(status).send(response);
+            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
+        }
+        else
+        {         
+            Friend.findOne({userId : user._id}, function(err, data)
             {
-                response.error = "Please sign-in!";
-                status = 401;
-                res.status(status).send(response);
-            }
-            else
-            {             
-                Friend.findOne({userId : user._id}, function(err, data)
+                if(data === null)
                 {
-                    if(data === null)
+                    res.send(null);
+                }
+                else
+                {
+                    User.where('_id').in(data.friends).exec(function(err, users)
                     {
-                        res.send(null);
-                    }
-                    else
-                    {
-                        User.where('_id').in(data.friends).exec(function(err, users)
+                        if(users === null)
                         {
-                            if(users === null)
+                            res.send({});
+                        }
+                        else
+                        {
+                            for(var i in users)
                             {
-                                res.send({});
+                                users[i].authenticationToken = "protected";
+                                users[i].password = "protected";
                             }
-                            else
-                            {
-                                for(var i in users)
-                                {
-                                    users[i].password = "protected";
-                                }
 
-                                res.send(users);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
+                            res.send(users);
+                        }
+                    });
+                }
+            });
+        }
+
+    });
 
 }
 
@@ -170,7 +190,6 @@ exports.auth = function(req, res) {
 
         res.status(400).send(response);
     }
-
 
     User.findOne({ email : user.email }).exec(function(err, item)
     {
@@ -205,7 +224,7 @@ exports.auth = function(req, res) {
         {
             var timestamp = (new Date().getTime()).toString();
 
-            item.token = bcrypt.hashSync(timestamp+item.email,12);
+            item.authenticationToken = bcrypt.hashSync(timestamp+item.email,12);
 
             item.save(function(err, item)
             {
@@ -224,12 +243,28 @@ exports.auth = function(req, res) {
 exports.unAuth = function(req, res) {
 
     var response = {};
+    var alreadyOut = false;
 
-    req.session.user = undefined;
+    isAuthenticated(req, function(user)
+    {
+        if(user == null)
+        {
+            response.message = "You are already out!";
+            res.status(200).send(response);
+        }
+        else
+        {
+            var timestamp = (new Date().getTime()).toString();
 
-    response.message = "You are out!";
+            user.authenticationToken = bcrypt.hashSync(timestamp+user.email,12);
 
-    res.status(200).send(response);
+            user.save(function(err, user)
+            {
+                response.message = "You are out!";
+                res.status(200).send(response);
+            });
+        }
+    });
 }
 
 /*
@@ -241,23 +276,21 @@ exports.unAuth = function(req, res) {
 exports.findMe = function(req, res) {
 
     var response = {};
-    var invalid = false;
 
-    if(req.session.user === undefined)
+    isAuthenticated(req, function(user)
     {
-        response.error = "Please sign-in!";
-        invalid = true;
-    }
+        if(user == null)
+        {
+            response.error = "Please sign-in!";
+            res.status(401).send(response);
+        }
+        else
+        {
+            user.password = "protected";
 
-    if(invalid)
-    {
-        res.status(401).send(response);
-        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-    }
-    else
-    {
-        res.send(req.session.user);
-    }
+            res.send(user);
+        }
+    });
    
 };
 
@@ -270,13 +303,13 @@ exports.findMe = function(req, res) {
 exports.findById = function(req, res) {
 
     var id = req.params.id;
-    console.log('Retrieving user: ' + id);
 
     User.findOne({_id : id}, function(err, user)
     {
         if(user != null)
         {
             user.password = "protected";
+            user.authenticationToken = "protected";
 
             res.send(user);
         }
@@ -325,6 +358,7 @@ exports.find = function(req, res) {
             }
             else
             {
+                user.authenticationToken = "protected";
                 user.password = "protected";
                 res.send(user);
             }
@@ -346,7 +380,9 @@ exports.findAll = function(req, res) {
         }
         else
         {
-            res.status(200).send(users);
+            user.authenticationToken = "protected";
+            user.password = "protected";
+            res.send(users);
         }
     });
 };
@@ -406,6 +442,7 @@ exports.addUser = function(req, res) {
                     newFriends.save(function(err, data2)
                     {
                         data.password = "protected";
+                        user.authenticationToken = "protected";
                         res.status(200).send(data);
                     });
                 });
