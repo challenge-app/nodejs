@@ -34,8 +34,11 @@
 						<li data-trigger="user-model">
 							<a href="#"><i class="icon-chevron-right"></i> User</a>
 						</li>
-						<li data-trigger="friend-model">
-							<a href="#"><i class="icon-chevron-right"></i> Friend</a>
+						<li data-trigger="challenge-model">
+							<a href="#"><i class="icon-chevron-right"></i> Challenge</a>
+						</li>
+						<li data-trigger="challengeInfo-model">
+							<a href="#"><i class="icon-chevron-right"></i> ChallengeInfo</a>
 						</li>
 					</ul>
 				</div>
@@ -130,7 +133,7 @@
 									<p>[POST] URL /user</p>
 									<p>PARAMETERS { email : "teste@teste.com", password : "123" }</p>
 									<p>STATUS 200 OK</p>
-									<p>{ "email": "teste@teste.com", "password": "protected", "_id": "52cc9cd3515aeb4d1554de49", "__v": 0 }</p>
+									<p>{ "email": "teste@teste.com", "_id": "52cc9cd3515aeb4d1554de49", "friends": [] }</p>
 								</div>
 							</div>
 							<hr/>
@@ -165,7 +168,7 @@
 									<p>[GET] URL /user/52cc9cd3515aeb4d1554de49</p>
 									<p>PARAMETERS </p>
 									<p>STATUS 200 OK</p>
-									<p>{ "email": "teste@teste.com", "password": "protected", "_id": "52cc9cd3515aeb4d1554de49", "__v": 0 }</p>
+									<p>{ "email": "teste@teste.com", "_id": "52cc9cd3515aeb4d1554de49", "friends": [ "52ce527afebb200c5758f58b" ] }</p>
 								</div>
 							</div>
 							<hr/>
@@ -204,7 +207,7 @@
 									<p>[POST] URL /user/find</p>
 									<p>PARAMETERS { email : "teste@teste.com" }</p>
 									<p>STATUS 200 OK</p>
-									<p>{ "email": "teste@teste.com", "password": "protected", "_id": "52cc9cd3515aeb4d1554de49", "__v": 0 }</p>
+									<p>{ "email": "teste@teste.com", "_id": "52ce527afebb200c5758f58b", "friends": [ "52cc9cd3515aeb4d1554de49" ] }</p>
 								</div>
 							</div>
 							<hr/>
@@ -263,7 +266,7 @@
 									<p>[POST] URL /user/auth</p>
 									<p>PARAMETERS { "email" : "teste@teste.com", "password" : "123" }</p>
 									<p>STATUS 200 OK</p>
-									<p>{ "authenticationToken": "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O", "email": "teste@teste.com", "password": "protected", "_id": "52cc9cd3515aeb4d1554de49", "__v": 0 }</p>
+									<p>{ "authenticationToken": "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O", "email": "teste@teste.com", "_id": "52cc9cd3515aeb4d1554de49", "friends": [ "52ce527afebb200c5758f58b" ] }</p>
 								</div>
 							</div>
 							<hr/>
@@ -326,7 +329,7 @@
 									<p>PARAMETERS</p>
 									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
 									<p>STATUS 200 OK</p>
-									<p>[ { "email": "friend@teste.com", "password": "protected", "_id": "52cc9cd3515sab4d1554de49", "__v": 0 } ]</p>
+									<p>{ "email": "teste@teste.com", "_id": "52cc9cd3515aeb4d1554de49", "friends": [ { "_id": "52ce527afebb200c5758f58b", "email": "b", "friends": [ "52cc9cd3515aeb4d1554de49" ] } ] }</p>
 								</div>
 							</div>
 							<hr/>
@@ -376,7 +379,157 @@
 									<p>PARAMETERS { _id : "52cc9cd3515sab4d1554de49" }</p>
 									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
 									<p>STATUS 200 OK</p>
-									<p>[ { "email": "friend@teste.com", "password": "protected", "_id": "52cc9cd3515sab4d1554de49", "__v": 0 }, { "email": "friend2@teste.com", "password": "protected", "_id": "52cc9cd3515sab4d1554de49", "__v": 0 } ]</p>
+									<p>{ "email": "teste@teste.com", "_id": "52cc9cd3515aeb4d1554de49", "friends": [ "52ce527afebb200c5758f58b", "52ce527ffebb200c5758f58f" ] }</p>
+								</div>
+							</div>
+						</article>
+					</section>
+					<hr/>
+					<section id="challenge-controller">
+						<article class="infos">
+							<h2>Challenge controller</h2>
+							<p>Here you will manipulate all challenges info that you need.</p>
+							<p>Every access will follow <code>/challenge</code> URL.</p>
+						</article>
+						<article class="methods">
+							<h4>Methods</h4>
+							<div class="new-challenge">
+								<p>
+									<code class="supper blue">[POST]</code>
+									<code class="supper">/</code>
+								</p>
+								<p>Will try to create a new <a href="#" data-trigger="user-model">Challenge</a>.</p>
+								<table class="table table-bordered table-stripped">
+									<thead>
+										<td>Parameters</td>
+										<td>Headers</td>
+										<td>Status code</td>
+										<td>Return</td>
+									</thead>
+									<tbody>
+										<tr class="error">
+											<td></td>
+											<td></td>
+											<td>401 Unauthorized</td>
+											<td><code class="normal">{ error : "Please sign-in!" }</code></td>
+										</tr>
+										<tr class="error">
+											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
+											<td>400 Bad request</td>
+											<td><code class="normal">{ error : "Give me an receiverId!" }</code></td>
+										</tr>
+										<tr class="error">
+											<td><code class="normal">$receiverId</code></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
+											<td>400 Bad request</td>
+											<td><code class="normal">{ error : "Give me a description!" }</code></td>
+										</tr>
+										<tr class="error">
+											<td>
+												<code class="normal">$receiverId</code>
+												<code class="normal">$description</code>
+											</td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
+											<td>422 Unprocessable entity</td>
+											<td><code class="normal">{ error : "User not found!" }</code></td>
+										</tr>
+										<tr class="success">
+											<td>
+												<code class="normal">$receiverId</code>
+												<code class="normal">$description</code>
+												<code class="normal">$reward *</code>
+											</td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
+											<td>200 OK</td>
+											<td><a href="#" data-trigger="challenge-model">Challenge</a></td>
+										</tr>
+									</tbody>
+								</table>
+								<p class="important">* Optional parameter.</p>
+								<h5>Example</h5>
+								<div class="blockcode">
+									<p>[POST] URL /challenge</p>
+									<p>PARAMETERS { receiverId : "52cc9cd3515sab4d1554de49", description : "I dare you to drink water upside down!", reward : 50 }</p>
+									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
+									<p>STATUS 200 OK</p>
+									<p>{ "info": { "description": "I dare you to drink water upside down!", "votes": 0, "_id": "52ce5bea656429af5b280bab", "challenges": [] }, "sender": "52ce527afebb200c5758f58b", "receiver": "52cc9cd3515sab4d1554de49", "reward": 0, "_id": "52ce5bea656429af5b280bac" }</p>
+								</div>
+							</div>
+							<hr/>
+							<div class="get-challenges-received">
+								<p>
+									<code class="supper blue">[GET]</code>
+									<code class="supper">/received</code>
+								</p>
+								<p>Will try to get all received <a href="#" data-trigger="user-model">Challenges</a>.</p>
+								<table class="table table-bordered table-stripped">
+									<thead>
+										<td>Parameters</td>
+										<td>Headers</td>
+										<td>Status code</td>
+										<td>Return</td>
+									</thead>
+									<tbody>
+										<tr class="error">
+											<td></td>
+											<td></td>
+											<td>401 Unauthorized</td>
+											<td><code class="normal">{ error : "Please sign-in!" }</code></td>
+										</tr>
+										<tr class="success">
+											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
+											<td>200 OK</td>
+											<td><a href="#" data-trigger="challenge-model">Challenge []</a></td>
+										</tr>
+									</tbody>
+								</table>
+								<h5>Example</h5>
+								<div class="blockcode">
+									<p>[GET] URL /challenge/received</p>
+									<p>PARAMETERS </p>
+									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
+									<p>STATUS 200 OK</p>
+									<p>{ "info": { "description": "I dare you to drink water upside down!", "votes": 0, "_id": "52ce5bea656429af5b280bab", "challenges": [] }, "sender": { "_id": "52ce527afebb200c5758f58b", "email": "friend@teste.com", "friends" : [ "52cc9cd3515sab4d1554de49" ] }, "receiver": "52cc9cd3515sab4d1554de49", "reward": 0, "_id": "52ce5bea656429af5b280bac" }</p>
+								</div>
+							</div>
+							<hr/>
+							<div class="get-challenges-sent">
+								<p>
+									<code class="supper blue">[GET]</code>
+									<code class="supper">/sent</code>
+								</p>
+								<p>Will try to get all sent <a href="#" data-trigger="user-model">Challenges</a>.</p>
+								<table class="table table-bordered table-stripped">
+									<thead>
+										<td>Parameters</td>
+										<td>Headers</td>
+										<td>Status code</td>
+										<td>Return</td>
+									</thead>
+									<tbody>
+										<tr class="error">
+											<td></td>
+											<td></td>
+											<td>401 Unauthorized</td>
+											<td><code class="normal">{ error : "Please sign-in!" }</code></td>
+										</tr>
+										<tr class="success">
+											<td></td>
+											<td><code class="normal">X-AUTH-TOKEN</code></td>
+											<td>200 OK</td>
+											<td><a href="#" data-trigger="challenge-model">Challenge []</a></td>
+										</tr>
+									</tbody>
+								</table>
+								<h5>Example</h5>
+								<div class="blockcode">
+									<p>[GET] URL /challenge/received</p>
+									<p>PARAMETERS </p>
+									<p>HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O</p>
+									<p>STATUS 200 OK</p>
+									<p>{ "info": { "description": "I dare you to drink water upside down!", "votes": 0, "_id": "52ce5bea656429af5b280bab", "challenges": [] }, "sender": "52cc9cd3515sab4d1554de49", "receiver": { "_id": "52ce527afebb200c5758f58b", "email": "friend@teste.com", "friends" : [ "52cc9cd3515sab4d1554de49" ] }, "reward": 0, "_id": "52ce5bea656429af5b280bac" }</p>
 								</div>
 							</div>
 						</article>
@@ -414,6 +567,14 @@
 										<td><span class="type">String</span></td>
 										<td>User password (hashed and salted).</td>
 									</tr>
+									<tr>
+										<td><code class="normal">$friends</code></td>
+										<td>
+											<span class="type">(Array) String</span> or 
+											<a href="#" data-trigger="user-model">(Array) Users</a>
+										</td>
+										<td>User friends ($ids or Users).</td>
+									</tr>
 								</tbody>
 							</table>
 							<h5>Example</h5>
@@ -422,16 +583,20 @@
 								<p>_id : "52cc9cd3515sab4d1554de49",</p>
 								<p>authenticationToken : "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O",</p>
 								<p>email : "teste@teste.com",</p>
-								<p>password : "protected"</p>
+								<p>password : "protected",</p>
+								<p>friends : [
+								<p class="tab1">"52ce527cfebb200c5758f58d",</p>
+								<p class="tab1">"52ce527ffebb200c5758f58f"</p>
+								<p>]</p>
 								<p>}</p>
 							</div>
 						</article>
 					</section>
 					<hr/>
-					<section id="friend-model">
+					<section id="challenge-model">
 						<article class="infos">
-							<h2>Friend model</h2>
-							<p>Here you will see the schema for Friend model.</p>
+							<h2>Challenge model</h2>
+							<p>Here you will see the schema for Challenge model.</p>
 							<table class="table table-bordered table-stripped">
 								<thead>
 									<td>Parameter</td>
@@ -442,29 +607,106 @@
 									<tr>
 										<td><code class="normal">$_id</code></td>
 										<td><span class="type">String</span></td>
-										<td>Friend id autogenerated.</td>
+										<td>Challenge id autogenerated.</td>
 									</tr>
 									<tr>
-										<td><code class="normal">$userId</code></td>
-										<td><span class="type">String</span></td>
-										<td>Associated user.</td>
+										<td><code class="normal">$info</code></td>
+										<td>
+											<a href="#" data-trigger="challengeInfo-model">ChallengeInfo</a>
+										</td>
+										<td>Challenge info.</td>
 									</tr>
 									<tr>
-										<td><code class="normal">$friends</code></td>
-										<td><span class="type">Array</span></td>
-										<td>Friends associated with that user.</td>
+										<td><code class="normal">$sender</code></td>
+										<td>
+											<span class="type">String</span> or 
+											<a href="#" data-trigger="user-model">User</a>
+										</td>
+										<td>The challenger.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$receiver</code></td>
+										<td>
+											<span class="type">String</span> or 
+											<a href="#" data-trigger="user-model">User</a>
+										</td>
+										<td>Who has been challenged.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$reward</code></td>
+										<td><span class="type">Integer</span></td>
+										<td>Reputation as reward.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$votes</code></td>
+										<td><span class="type">Integer</span></td>
+										<td>Thumbs up.</td>
 									</tr>
 								</tbody>
 							</table>
 							<h5>Example</h5>
 							<div class="blockcode json">
 								<p>{</p>
-								<p>_id : "52cc9cd3515sab4d1554de49",</p>
-								<p>userId : "54129cd3515sab4d1554df12",</p>
-								<p>friends : {</p>
-								<p class="tab1">_id : "52cc9cd3515sva4d1554de51",</p>
-								<p class="tab1">_id : "51cd5cd3as5svaqd1514de51"</p>
+								<p>_id: "52ce58ff3febf3205aa0d50e",</p>
+								<p>info: {</p>
+								<p class="tab1">_id: 52ce527cfebb200c5758f58d,</p>
+								<p class="tab1">description: "I dear you to...",</p>
+								<p class="tab1">votes: 125</p>
+								<p>},</p>
+								<p>sender: "52ce527afebb200c5758f58b",</p>
+								<p>receiver: {</p>
+								<p class="tab1">_id: 52ce527cfebb200c5758f58d,</p>
+								<p class="tab1">email: "friend@teste.com"</p>
+								<p>},</p>
+								<p>reward: 25,</p>
 								<p>}</p>
+							</div>
+						</article>
+					</section>
+					<hr/>
+					<section id="challengeInfo-model">
+						<article class="infos">
+							<h2>ChallengeInfo model</h2>
+							<p>Here you will see the schema for ChallengeInfo model.</p>
+							<table class="table table-bordered table-stripped">
+								<thead>
+									<td>Parameter</td>
+									<td>Type</td>
+									<td>Description</td>
+								</thead>
+								<tbody>
+									<tr>
+										<td><code class="normal">$_id</code></td>
+										<td><span class="type">String</span></td>
+										<td>ChallengeInfo id autogenerated.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$description</code></td>
+										<td><span class="type">String</span></td>
+										<td>Description of the challenge.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$generalVotes</code></td>
+										<td><span class="type">Integer</span></td>
+										<td>All thumbs up.</td>
+									</tr>
+									<tr>
+										<td><code class="normal">$challenges</code></td>
+										<td>
+											<span class="type">Array</span> or 
+											<a href="#" data-trigger="challenge-model">Challenges</a>
+										</td>
+										<td>Challenges with this ChallengeInfo.</td>
+									</tr>
+								</tbody>
+							</table>
+							<h5>Example</h5>
+							<div class="blockcode json">
+								<p>{</p>
+								<p>_id: 52ce527cfebb200c5758f58d,</p>
+								<p>description: "I dear you to...",</p>
+								<p>votes: 0,</p>
+								<p>challenges: []</p>
 								<p>}</p>
 							</div>
 						</article>
