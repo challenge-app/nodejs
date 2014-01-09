@@ -87,7 +87,7 @@ exports.addFriend = function(req, res) {
  * @return Friends data
  */
 exports.getFriends = function(req, res) {
-
+	
     var response = {};
     var invalid = false;
     var status = 400;

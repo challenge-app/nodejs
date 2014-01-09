@@ -35,7 +35,7 @@ app.use(express.static(__dirname + '/public'));
  * FOR SESSIONS!
  */
 app.use(express.cookieParser());
-app.use(express.session({secret: '1234567890QWERTY'}));
+app.use(express.cookieSession({secret: '1234567890QWERTY'}));
 
 /*
  * CONFIGURING THE APP

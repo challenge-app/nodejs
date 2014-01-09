@@ -1,0 +1,159 @@
+========================================================================================
+=  Please ensure that you set the default write concern for the database by setting    =
+=   one of the options                                                                 =
+=                                                                                      =
+=     w: (value of > -1 or the string 'majority'), where < 1 means                     =
+=        no write acknowlegement                                                       =
+=     journal: true/false, wait for flush to journal before acknowlegement             =
+=     fsync: true/false, wait for flush to file system before acknowlegement           =
+=                                                                                      =
+=  For backward compatibility safe is still supported and                              =
+=   allows values of [true | false | {j:true} | {w:n, wtimeout:n} | {fsync:true}]      =
+=   the default value is false which means the driver receives does not                =
+=   return the information of the success/error of the insert/update/remove            =
+=                                                                                      =
+=   ex: new Db(new Server('localhost', 27017), {safe:false})                           =
+=                                                                                      =
+=   http://www.mongodb.org/display/DOCS/getLastError+Command                           =
+=                                                                                      =
+=  The default of no acknowlegement will change in the very near future                =
+=                                                                                      =
+=  This message will disappear when the default safe is set on the driver Db           =
+========================================================================================
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+
+events.js:72
+        throw er; // Unhandled 'error' event
+              ^
+Error: listen EADDRINUSE
+    at errnoException (net.js:901:11)
+    at Server._listen2 (net.js:1039:14)
+    at listen (net.js:1061:10)
+    at Server.listen (net.js:1127:5)
+    at Function.app.listen (/home/ubuntu/challenge/node_modules/express/lib/application.js:533:24)
+    at Object.<anonymous> (/home/ubuntu/challenge/server.js:32:5)
+    at Module._compile (module.js:456:26)
+    at Object.Module._extensions..js (module.js:474:10)
+    at Module.load (module.js:356:32)
+    at Function.Module._load (module.js:312:12)
+========================================================================================
+=  Please ensure that you set the default write concern for the database by setting    =
+=   one of the options                                                                 =
+=                                                                                      =
+=     w: (value of > -1 or the string 'majority'), where < 1 means                     =
+=        no write acknowlegement                                                       =
+=     journal: true/false, wait for flush to journal before acknowlegement             =
+=     fsync: true/false, wait for flush to file system before acknowlegement           =
+=                                                                                      =
+=  For backward compatibility safe is still supported and                              =
+=   allows values of [true | false | {j:true} | {w:n, wtimeout:n} | {fsync:true}]      =
+=   the default value is false which means the driver receives does not                =
+=   return the information of the success/error of the insert/update/remove            =
+=                                                                                      =
+=   ex: new Db(new Server('localhost', 27017), {safe:false})                           =
+=                                                                                      =
+=   http://www.mongodb.org/display/DOCS/getLastError+Command                           =
+=                                                                                      =
+=  The default of no acknowlegement will change in the very near future                =
+=                                                                                      =
+=  This message will disappear when the default safe is set on the driver Db           =
+========================================================================================
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+Connected to 'user' database
+========================================================================================
+=  Please ensure that you set the default write concern for the database by setting    =
+=   one of the options                                                                 =
+=                                                                                      =
+=     w: (value of > -1 or the string 'majority'), where < 1 means                     =
+=        no write acknowlegement                                                       =
+=     journal: true/false, wait for flush to journal before acknowlegement             =
+=     fsync: true/false, wait for flush to file system before acknowlegement           =
+=                                                                                      =
+=  For backward compatibility safe is still supported and                              =
+=   allows values of [true | false | {j:true} | {w:n, wtimeout:n} | {fsync:true}]      =
+=   the default value is false which means the driver receives does not                =
+=   return the information of the success/error of the insert/update/remove            =
+=                                                                                      =
+=   ex: new Db(new Server('localhost', 27017), {safe:false})                           =
+=                                                                                      =
+=   http://www.mongodb.org/display/DOCS/getLastError+Command                           =
+=                                                                                      =
+=  The default of no acknowlegement will change in the very near future                =
+=                                                                                      =
+=  This message will disappear when the default safe is set on the driver Db           =
+========================================================================================
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+Connected to 'user' database
+Error: invalid request "{"error":"unauthorized"}"
+[90mGET /user [33m400 [90m8ms - 29b[0m
+Adding user: {"password":"jksjvdhdnkekek","email":"hehdhe"}
+Success: {"password":"$2a$12$99WM.CGvulO5Vvwd7Hrxa.p76Vwp1ux2Vj1YaArSLJz9hBplKyX8S","email":"hehdhe","_id":"52cc963c923dff3410000001"}
+[90mPOST /user [32m200 [90m829ms - 138b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET / [32m200 [90m22ms - 13.78kb[0m
+[90mGET / [36m304 [90m26ms[0m
+[90mGET / [32m200 [90m40ms - 13.78kb[0m
+[90mGET / [36m304 [90m3ms[0m
+[90mGET / [36m304 [90m4ms[0m
+[90mGET / [32m200 [90m3ms - 13.78kb[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mGET / [36m304 [90m4ms[0m
+[90mGET / [36m304 [90m4ms[0m
+[90mGET / [36m304 [90m2ms[0m
+[90mGET / [32m200 [90m3ms - 13.78kb[0m
+[90mGET /favicon.ico [33m404 [90m2ms[0m
+[90mGET / [32m200 [90m4ms - 13.78kb[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET / [32m200 [90m22ms - 13.78kb[0m
+[90mGET /favicon.ico [33m404 [90m2ms[0m
+[90mGET /user [32m200 [90m20ms - 798b[0m
+Retrieving user: deleteAll
+[90mGET /user/deleteAll [33m422 [90m2ms - 32b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET /user/deleteAll [32m200 [90m5423ms[0m
+[90mGET /user [32m200 [90m10ms - 2b[0m
+[90mGET /user [36m304 [90m3ms[0m
+[90mPOST /user/ [32m200 [90m624ms - 94b[0m
+[90mPOST /user/ [32m200 [90m528ms - 94b[0m
+[90mPOST /user/ [32m200 [90m541ms - 94b[0m
+[90mPOST /user/ [32m200 [90m537ms - 94b[0m
+[90mGET /user [32m200 [90m4ms - 638b[0m
+{ email: 'a', password: 'a' }
+[90mPOST /user/auth [32m200 [90m531ms - 94b[0m
+[90mPOST /user/friend [32m200 [90m97ms - 142b[0m
+[90mPOST /user/friend [32m200 [90m11ms - 174b[0m
+[90mPOST /user/friend [32m200 [90m11ms - 206b[0m
+[90mGET /user [36m304 [90m3ms[0m
+[90mGET /user/friends [32m200 [90m35ms - 326b[0m
+[90mGET /friends [33m404 [90m2ms[0m
+[90mGET /friends [33m404 [90m1ms[0m
+[90mGET /friends [33m404 [90m0ms[0m
+{ password: 'a', email: 'a' }
+[90mPOST /user/auth [32m200 [90m822ms - 94b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET /friends [33m404 [90m7ms[0m
