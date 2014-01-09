@@ -1,9 +1,19 @@
 /*
  * EXTENSIONS
  */
-var express = require('express'),
-    user 	= require('./controllers/user'),
-    docs 	= require('./controllers/docs');
+var express = require('express');
+
+/*
+ * CONTROLLERS
+ */
+var user 				= require('./controllers/user'),
+    challenge 	= require('./controllers/challenge'),
+    docs 				= require('./controllers/docs');
+
+/*
+ * CONFIG
+ */
+var mongo = require('./config/mongodb');
 
 /*
  * DECLARE APP
@@ -40,10 +50,11 @@ app.configure(function () {
  */
 app.locals.title = 'Challenges';
 
-/*
- * GET ROUTES
- */
 app.get('/', docs.showDocs);
+
+/*
+ * USER GET ROUTES
+ */
 app.get('/user', user.findAll);
 app.get('/user/logout', user.unAuth);
 app.get('/user/friends', user.getFriends);
@@ -52,7 +63,7 @@ app.get('/user/deleteAll', user.deleteAll);
 app.get('/user/:id', user.findById);
 
 /*
- * POST ROUTES
+ * USER POST ROUTES
  */
 app.post('/user/friend', user.addFriend);
 app.post('/user/auth', user.auth);
@@ -60,15 +71,16 @@ app.post('/user/find', user.find);
 app.post('/user', user.addUser);
 
 /*
- * PUT ROUTES
+ * CHALLENGE GET ROUTES
  */
-app.put('/user/:id', user.updateUser);
-
-/*
- * DELETE ROUTES
- */
-app.delete('/user/:id', user.deleteUser);
+app.get('/challenge/received', challenge.challengesReceived);
+app.get('/challenge/sent', challenge.challengesSent);
  
+/*
+ * CHALLENGE POST ROUTES
+ */
+app.post('/challenge', challenge.newChallenge);
+
 /*
  * START IN PORT 3000
  */

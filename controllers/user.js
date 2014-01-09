@@ -1,9 +1,7 @@
 /*
  * EXTENSIONS
  */
-var mongo       = require('mongodb'),
-    bcrypt      = require('bcrypt'),
-    mongoose    = require('mongoose'),
+var bcrypt      = require('bcrypt'),
     userModel   = require('../models/user'),
     friendModel = require('../models/friend');
 
@@ -12,18 +10,6 @@ var mongo       = require('mongodb'),
  */
 var User    = userModel.getUserModel(),
     Friend  = friendModel.getFriendModel();
-
-/*
- * DATABASE SETUP
- */
-mongoose.connect('mongodb://localhost/challenge');
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-
-db.once('open', function callback () {
-    console.log('LOAD: Mongoose!');
-});
 
 /*
  * [POST] ADD A NEW FRIEND
