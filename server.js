@@ -55,7 +55,7 @@ app.get('/', docs.showDocs);
 /*
  * USER GET ROUTES
  */
-app.get('/user', user.findMe);
+app.get('/user', user.findAll);
 app.get('/user/logout', user.unAuth);
 app.get('/user/friends', user.getFriends);
 app.get('/user/deleteAll', user.deleteAll);

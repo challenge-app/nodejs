@@ -24,6 +24,10 @@ p.obs {
 	display: inline-block;
 }
 
+td {
+	vertical-align: middle !important;
+}
+
 code {
 	font-size: 14px;
 	font-weight: bold;
@@ -37,6 +41,8 @@ code.supper {
 code.normal {
 	font-weight: normal;
 	color: #3498db;
+	margin: 2.5px 0px;
+	display: inline-block;
 }
 
 .blue {

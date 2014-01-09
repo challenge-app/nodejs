@@ -2,6 +2,7 @@
  * EXTENSIONS
  */
 var bcrypt      = require('bcrypt'),
+    auth        = require('../config/auth'),
     userModel   = require('../models/user'),
     friendModel = require('../models/friend');
 
@@ -10,33 +11,6 @@ var bcrypt      = require('bcrypt'),
  */
 var User    = userModel.getUserModel(),
     Friend  = friendModel.getFriendModel();
-
-/*
- * CHECK AUTH
- */
-function isAuthenticated(req, callback)
-{
-    var reqToken = req.header('X-AUTH-TOKEN');
-
-    if(reqToken === undefined)
-    {
-        callback(null);
-    }
-    else
-    {
-        User.findOne({authenticationToken : reqToken}, function(err, user)
-        {
-            if(user === null)
-            {
-                callback(null);
-            }
-            else
-            {   
-                callback(user);
-            }
-        });
-    }
-}
 
 /*
  * [POST] ADD A NEW FRIEND
@@ -53,7 +27,7 @@ exports.addFriend = function(req, res) {
     var invalid = false;
     var status = 400;
 
-    isAuthenticated(req, function(user)
+    auth.isAuthenticated(req, function(user)
     {
         if(user == null)
         {
@@ -86,20 +60,17 @@ exports.addFriend = function(req, res) {
                 }
                 else
                 {
-                    Friend.findOne({ userId : user._id }).exec(function(err, currUserFriends)
+                    user.friends.push(friendUser);
+
+                    user.save(function(err, user)
                     {
-                        currUserFriends.friends.push(friendUser._id);
+                        friendUser.friends.push(user);
 
-                        currUserFriends.save(function(err, currUserFriends)
+                        friendUser.save(function(err, ignore)
                         {
-                            Friend.findOne({ userId : friendUser._id }).exec(function(err, friendUserFriends)
+                            user.populate('friends', function(err, user)
                             {
-                                friendUserFriends.friends.push(user._id);
-
-                                friendUserFriends.save(function(err, ignored)
-                                {
-                                    res.send(currUserFriends);
-                                });
+                                res.send(user);
                             });
                         });
                     });
@@ -122,7 +93,7 @@ exports.getFriends = function(req, res) {
     var invalid = false;
     var status = 400;
 
-    isAuthenticated(req, function(user)
+    auth.isAuthenticated(req, function(user)
     {
         if(user == null)
         {
@@ -137,33 +108,11 @@ exports.getFriends = function(req, res) {
             console.log('Error: invalid request "'+JSON.stringify(response)+'"');
         }
         else
-        {         
-            Friend.findOne({userId : user._id}, function(err, data)
+        {
+            user.populate('friends', function(err, user)
             {
-                if(data === null)
-                {
-                    res.send(null);
-                }
-                else
-                {
-                    User.where('_id').in(data.friends).exec(function(err, users)
-                    {
-                        if(users === null)
-                        {
-                            res.send({});
-                        }
-                        else
-                        {
-                            for(var i in users)
-                            {
-                                users[i].authenticationToken = "protected";
-                                users[i].password = "protected";
-                            }
-
-                            res.send(users);
-                        }
-                    });
-                }
+                user.noToken();
+                res.send(user);
             });
         }
 
@@ -228,7 +177,6 @@ exports.auth = function(req, res) {
 
             item.save(function(err, item)
             {
-                item.password = "protected";
                 res.send(item);
             });
         }
@@ -245,7 +193,7 @@ exports.unAuth = function(req, res) {
     var response = {};
     var alreadyOut = false;
 
-    isAuthenticated(req, function(user)
+    auth.isAuthenticated(req, function(user)
     {
         if(user == null)
         {
@@ -277,7 +225,7 @@ exports.findMe = function(req, res) {
 
     var response = {};
 
-    isAuthenticated(req, function(user)
+    auth.isAuthenticated(req, function(user)
     {
         if(user == null)
         {
@@ -286,9 +234,7 @@ exports.findMe = function(req, res) {
         }
         else
         {
-            user.password = "protected";
-
-            res.send(user);
+            res.send(user.noToken());
         }
     });
    
@@ -308,10 +254,7 @@ exports.findById = function(req, res) {
     {
         if(user != null)
         {
-            user.password = "protected";
-            user.authenticationToken = "protected";
-
-            res.send(user);
+            res.send(user.noToken());
         }
         else
         {
@@ -358,9 +301,7 @@ exports.find = function(req, res) {
             }
             else
             {
-                user.authenticationToken = "protected";
-                user.password = "protected";
-                res.send(user);
+                res.send(user.noToken());
             }
         });
     }
@@ -373,15 +314,13 @@ exports.find = function(req, res) {
  */
 exports.findAll = function(req, res) {
 
-    User.find(function (err, users) {
+    User.find().select("-authenticationToken").exec(function (err, users) {
         if(err)
         {
             res.status(400).send("Error");
         }
         else
         {
-            user.authenticationToken = "protected";
-            user.password = "protected";
             res.send(users);
         }
     });
@@ -432,19 +371,7 @@ exports.addUser = function(req, res) {
 
                 newUser.save(function(err, data)
                 {
-                    var ff = new Array();
-
-                    var newFriends = new Friend({
-                        userId : data._id,
-                        friends : ff
-                    });
-
-                    newFriends.save(function(err, data2)
-                    {
-                        data.password = "protected";
-                        user.authenticationToken = "protected";
-                        res.status(200).send(data);
-                    });
+                    res.status(200).send(data.noToken());
                 });
             }
             else
