@@ -105,9 +105,9 @@ exports.newChallenge = function(req, res) {
 
                                 chall.save(function(err, chall)
                                 {
-                                    chall.populate('info', function(err, chall)
+                                    chall.populate('info').populate('sender').populate('receiver', function(err, chall)
                                     {
-                                        res.send(chall);
+                                                res.send(chall);
                                     });
                                 });
                             });
@@ -148,7 +148,7 @@ exports.challengesReceived = function(req, res) {
         }
         else
         {
-            Challenge.find({ receiver : user._id }).populate('info').populate('sender').exec(function(err, challenges)
+            Challenge.find({ receiver : user._id }).populate('info').populate('sender').populate('receiver').exec(function(err, challenges)
             {
                 res.send(challenges);
             });
@@ -185,7 +185,7 @@ exports.challengesSent = function(req, res) {
         }
         else
         {
-            Challenge.find({ sender : user._id }).populate('info').populate('receiver').exec(function(err, challenges)
+            Challenge.find({ sender : user._id }).populate('info').populate('sender').populate('receiver').exec(function(err, challenges)
             {
                 res.send(challenges);
             });
