@@ -109,7 +109,7 @@ exports.getFriends = function(req, res) {
         }
         else
         {
-            user.populate('friends', function(err, user)
+            user.populate('friends','-friends', function(err, user)
             {
                 user.noToken();
                 res.send(user);
@@ -177,7 +177,11 @@ exports.auth = function(req, res) {
 
             item.save(function(err, item)
             {
-                res.send(item);
+                var respItem = {};
+		respItem._id = item._id;
+		respItem.authenticationToken = item.authenticationToken;
+		respItem.email = item.email;
+		res.send(respItem);
             });
         }
 
@@ -250,7 +254,7 @@ exports.findById = function(req, res) {
 
     var id = req.params.id;
 
-    User.findOne({_id : id}, function(err, user)
+    User.findOne({_id : id},'-friends', function(err, user)
     {
         if(user != null)
         {
@@ -292,7 +296,7 @@ exports.find = function(req, res) {
     }
     else
     {
-        User.findOne({ email : data.email }, function(err, user)
+        User.findOne({ email : data.email },'-friends', function(err, user)
         {
             if(user == null)
             {

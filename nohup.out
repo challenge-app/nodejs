@@ -157,3 +157,216 @@ connect.limit() will be removed in connect 3.0
 Listening on port 3000...
 LOAD: Mongoose!
 [90mGET /friends [33m404 [90m7ms[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET / [32m200 [90m23ms - 16.43kb[0m
+[90mGET /favicon.ico [33m404 [90m2ms[0m
+[90mGET /index.html [33m404 [90m1ms[0m
+[90mGET / [36m304 [90m25ms[0m
+[90mGET / [36m304 [90m3ms[0m
+[90mGET / [36m304 [90m2ms[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET / [32m200 [90m41ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m2ms[0m
+[90mGET /user/deleteAll [32m200 [90m3283ms[0m
+[90mGET / [36m304 [90m9ms[0m
+[90mPOST /user/auth [33m422 [90m685ms - 32b[0m
+Error: invalid request "{"error":"User not found!"}"
+[90mPOST /user [32m200 [90m872ms - 72b[0m
+[90mGET /user/friends [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mPOST /user/auth [33m422 [90m1495ms - 32b[0m
+Error: invalid request "{"error":"User not found!"}"
+[90mPOST /user [32m200 [90m2540ms - 72b[0m
+[90mGET /user/friends [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mPOST /user/auth [32m200 [90m1461ms - 161b[0m
+[90mGET /user/friends [33m401 [90m1ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mGET / [32m200 [90m6ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m0ms[0m
+[90mGET / [32m200 [90m6ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mGET / [36m304 [90m28ms[0m
+[90mGET / [32m200 [90m28ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m0ms[0m
+[90mGET / [36m304 [90m17ms[0m
+[90mGET / [32m200 [90m28ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mGET /user [32m200 [90m294ms - 170b[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mGET / [32m200 [90m4ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m0ms[0m
+[90mGET /favicon.ico [33m404 [90m4ms[0m
+[90mGET / [36m304 [90m58ms[0m
+[90mGET /friends [33m404 [90m2ms[0m
+[90mGET /52cc9cd3515aeb4d1554de49 [33m404 [90m0ms[0m
+[90mGET /user/ [32m200 [90m4ms - 170b[0m
+[90mGET /user/friends [33m401 [90m1ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mGET /user/ [36m304 [90m3ms[0m
+[90mGET / [32m200 [90m29ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m0ms[0m
+[90mGET / [36m304 [90m10ms[0m
+[90mPOST /user/auth [32m200 [90m1657ms - 161b[0m
+[90mGET /user/friends [32m200 [90m23ms - 72b[0m
+[90mGET /user/friends [32m200 [90m3ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1420ms - 161b[0m
+[90mGET /user/friends [32m200 [90m3ms - 72b[0m
+[90mGET /user/friends [32m200 [90m2ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1336ms - 161b[0m
+[90mPOST /user/auth [32m200 [90m1374ms - 161b[0m
+[90mGET /user/friends [32m200 [90m20ms - 72b[0m
+[90mGET /user/friends [32m200 [90m4ms - 72b[0m
+[90mGET /user/friends [32m200 [90m4ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1355ms - 161b[0m
+[90mGET /user/friends [32m200 [90m5ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1383ms - 161b[0m
+[90mGET /user/friends [32m200 [90m4ms - 72b[0m
+[90mGET /user/friends [32m200 [90m4ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1372ms - 161b[0m
+[90mGET /user/friends [32m200 [90m4ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1363ms - 161b[0m
+[90mGET /user/friends [32m200 [90m3ms - 72b[0m
+[90mGET /user/friends [32m200 [90m3ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1355ms - 161b[0m
+[90mGET / [32m200 [90m55ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mPOST /user/auth [32m200 [90m1649ms - 161b[0m
+[90mGET /user/friends [32m200 [90m3ms - 72b[0m
+[90mGET /user/friends [32m200 [90m3ms - 72b[0m
+[90mPOST /user/auth [33m400 [90m42ms - 34b[0m
+Error: invalid request "{"error":"User not found!"}"
+[90mPOST /user/auth [32m200 [90m1061ms - 161b[0m
+[90mGET /challenge/received [32m200 [90m5ms - 2b[0m
+[90mGET /challenge/sent [32m200 [90m3ms - 2b[0m
+[90mGET /user/friends [32m200 [90m5ms - 72b[0m
+[90mGET /user [32m200 [90m3ms - 170b[0m
+[90mPOST /user/friend [33m400 [90m5ms - 31b[0m
+Error: invalid request "{"error":"Give me an id!"}"
+[90mPOST /user/friend [33m400 [90m3ms - 31b[0m
+Error: invalid request "{"error":"Give me an id!"}"
+[90mPOST /user/friend [32m200 [90m95ms - 299b[0m
+[90mGET /user [32m200 [90m3ms - 246b[0m
+[90mPOST /challenge [33m400 [90m7ms - 39b[0m
+Error: invalid request "{"error":"Give me an receiverId!"}"
+[90mPOST /challenge [33m400 [90m4ms - 39b[0m
+Error: invalid request "{"error":"Give me an receiverId!"}"
+[90mPOST /challenge [33m400 [90m3ms - 39b[0m
+Error: invalid request "{"error":"Give me a description!"}"
+[90mPOST /challenge [32m200 [90m108ms - 294b[0m
+[90mGET /challenge/sent [32m200 [90m7ms - 428b[0m
+[90mPOST /challenge [32m200 [90m48ms - 295b[0m
+[90mPOST /user/auth [32m200 [90m2124ms - 195b[0m
+[90mPOST /user/auth [32m200 [90m3197ms - 195b[0m
+[90mPOST /user/auth [32m200 [90m1279ms - 195b[0m
+[90mPOST /user/auth [32m200 [90m3173ms - 195b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET /user [36m304 [90m29ms[0m
+[90mGET /challenge/sent [33m401 [90m43ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /challenge/sent [33m401 [90m3ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mPOST /user/auth [32m200 [90m1101ms - 195b[0m
+[90mGET /challenge/sent [32m200 [90m20ms - 1.04kb[0m
+[90mPOST /user/auth [32m200 [90m1262ms - 195b[0m
+[90mPOST /user/auth [32m200 [90m1061ms - 195b[0m
+[90mPOST /user/auth [32m200 [90m2595ms - 195b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mPOST /user/auth [32m200 [90m1094ms - 144b[0m
+[90mPOST /user/auth [32m200 [90m3138ms - 144b[0m
+[90mPOST /user/auth [32m200 [90m3237ms - 144b[0m
+[90mPOST /user/auth [32m200 [90m2410ms - 144b[0m
+[90mPOST /user/auth [32m200 [90m3128ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m23ms - 1.04kb[0m
+[90mGET /challenge/sent [33m401 [90m3ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mPOST /user/auth [32m200 [90m3212ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m15ms - 1.04kb[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mGET /challenge/sent [33m401 [90m54ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mPOST /user/auth [32m200 [90m1091ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m58ms - 811b[0m
+[90mPOST /user/auth [32m200 [90m13123ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m9ms - 811b[0m
+[90mPOST /user/auth [32m200 [90m1291ms - 144b[0m
+[90mPOST /user/auth [32m200 [90m1384ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m8ms - 811b[0m
+[90mGET /challenge/sent [32m200 [90m12ms - 811b[0m
+[90mPOST /user/auth [32m200 [90m1746ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m15ms - 811b[0m
+[90mPOST /user/auth [32m200 [90m1280ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m9ms - 811b[0m
+[90mPOST /user/auth [32m200 [90m1519ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m9ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 210b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mPOST /user/auth [32m200 [90m1130ms - 144b[0m
+[90mGET /user/friends [32m200 [90m52ms - 147b[0m
+[90mPOST /user/auth [32m200 [90m3182ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m15ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mPOST /user/auth [33m422 [90m1856ms - 32b[0m
+Error: invalid request "{"error":"User not found!"}"
+[90mPOST /user [32m200 [90m2224ms - 72b[0m
+[90mGET /challenge/sent [33m401 [90m4ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /user/friends [33m401 [90m3ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mPOST /user/auth [32m200 [90m3055ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m12ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mGET /challenge/sent [32m200 [90m10ms - 811b[0m
+[90mGET /user/friends [32m200 [90m2ms[0m
+[90mPOST /user/auth [32m200 [90m2188ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m8ms - 811b[0m
+[90mGET /user/friends [32m200 [90m4ms - 147b[0m
+[90mGET /challenge/sent [32m200 [90m47ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mPOST /user/auth [32m200 [90m2082ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m11ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mPOST /user/auth [32m200 [90m1897ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m11ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mPOST /user/auth [32m200 [90m1663ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m8ms - 811b[0m
+[90mGET /user/friends [32m200 [90m4ms - 147b[0m
+[90mPOST /user/find [32m200 [90m7ms - 106b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mPOST /user/find [32m200 [90m41ms - 106b[0m
+connect.multipart() will be removed in connect 3.0
+visit https://github.com/senchalabs/connect/wiki/Connect-3.0 for alternatives
+connect.limit() will be removed in connect 3.0
+Listening on port 3000...
+LOAD: Mongoose!
+[90mPOST /user/find [32m200 [90m38ms - 55b[0m
+[90mPOST /user/find [32m200 [90m9ms - 55b[0m

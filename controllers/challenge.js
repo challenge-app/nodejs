@@ -185,7 +185,7 @@ exports.challengesSent = function(req, res) {
         }
         else
         {
-            Challenge.find({ sender : user._id }).populate('info').populate('sender').populate('receiver').exec(function(err, challenges)
+            Challenge.find({ sender : user._id }).populate('info').populate('sender','-friends').populate('receiver','-friends').exec(function(err, challenges)
             {
                 res.send(challenges);
             });
