@@ -370,3 +370,74 @@ Listening on port 3000...
 LOAD: Mongoose!
 [90mPOST /user/find [32m200 [90m38ms - 55b[0m
 [90mPOST /user/find [32m200 [90m9ms - 55b[0m
+[90mPOST /user/auth [32m200 [90m2148ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m7ms - 2b[0m
+[90mGET /user/friends [32m200 [90m6ms - 72b[0m
+[90mPOST /user/auth [32m200 [90m1348ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m16ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mPOST /user/auth [32m200 [90m1551ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m56ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mPOST /user/auth [32m200 [90m1552ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m37ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mGET /challenge/sent [32m200 [90m45ms - 811b[0m
+[90mGET /user/friends [32m200 [90m6ms - 147b[0m
+[90mGET / [36m304 [90m131ms[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mPOST /user/auth [32m200 [90m1613ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m56ms - 811b[0m
+[90mGET /user/friends [32m200 [90m4ms - 147b[0m
+[90mGET / [32m200 [90m10ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mGET /find [33m404 [90m1ms[0m
+[90mGET /friends [33m404 [90m0ms[0m
+[90mGET /user/find/1 [33m404 [90m1ms[0m
+[90mGET /user/find/2 [33m404 [90m0ms[0m
+[90mGET /user/find/a [33m404 [90m1ms[0m
+[90mGET /user/52cc9cd3515aeb4d1554de49 [33m422 [90m3ms - 32b[0m
+[90mGET / [36m304 [90m6ms[0m
+[90mPOST /user/find [32m200 [90m4ms - 55b[0m
+[90mPOST /user/auth [32m200 [90m1355ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m9ms - 811b[0m
+[90mGET /user/friends [32m200 [90m4ms - 147b[0m
+[90mPOST /user/find [32m200 [90m305ms - 55b[0m
+[90mPOST /user/find [32m200 [90m305ms - 55b[0m
+[90mPOST /user/find [33m422 [90m259ms - 32b[0m
+[90mPOST /user/auth [32m200 [90m1383ms - 144b[0m
+[90mGET /challenge/sent [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /user/friends [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mPOST /user/find [32m200 [90m289ms - 55b[0m
+[90mGET /challenge/sent [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /user/friends [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mGET /challenge/sent [33m401 [90m2ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /user/friends [33m401 [90m1ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mGET / [32m200 [90m11ms - 25.63kb[0m
+[90mGET /favicon.ico [33m404 [90m1ms[0m
+[90mGET /challenge/sent [33m401 [90m3ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /user/friends [33m401 [90m3ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mGET /challenge/sent [33m401 [90m1ms - 32b[0m
+Error: invalid request "{"error":"Please sign in!"}"
+[90mGET /user/friends [33m401 [90m3ms - 32b[0m
+Error: invalid request "{"error":"Please sign-in!"}"
+[90mPOST /user/auth [32m200 [90m1343ms - 144b[0m
+[90mGET /challenge/sent [32m200 [90m9ms - 811b[0m
+[90mGET /user/friends [32m200 [90m5ms - 147b[0m
+[90mGET /challenge/sent [32m200 [90m9ms - 811b[0m
+[90mGET /user/friends [32m200 [90m3ms - 147b[0m
+[90mPOST /user/find [32m200 [90m303ms - 55b[0m
+[90mPOST /user/find [32m200 [90m305ms - 55b[0m
+[90mPOST /user/find [32m200 [90m321ms - 55b[0m
+[90mPOST /user/find [33m422 [90m279ms - 32b[0m
+[90mPOST /user/ [32m200 [90m542ms - 79b[0m
+[90mPOST /user/ [32m200 [90m535ms - 80b[0m
+[90mPOST /user/ [32m200 [90m537ms - 80b[0m

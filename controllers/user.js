@@ -60,6 +60,14 @@ exports.addFriend = function(req, res) {
                 }
                 else
                 {
+		    if(user.friends.indexOf(data._id) != -1)
+		    {
+			response.error = "He is already your friend";
+			
+			res.status(422).send(response);
+		    }
+		    else
+		    {
                     user.friends.push(friendUser);
 
                     user.save(function(err, user)
@@ -68,13 +76,14 @@ exports.addFriend = function(req, res) {
 
                         friendUser.save(function(err, ignore)
                         {
-                            user.populate('friends', function(err, user)
+                            user.populate({ path: 'friends', select: '-friends' }, function(err, user)
                             {
                                 res.send(user);
                             });
                         });
                     });
-                }
+			    }
+		}
             });
         }
     });
@@ -296,7 +305,7 @@ exports.find = function(req, res) {
     }
     else
     {
-        User.findOne({ email : data.email },'-friends', function(err, user)
+        User.find({ email : new RegExp(data.email, 'i') },'-friends -authenticationToken', function(err, user)
         {
             if(user == null)
             {
@@ -305,7 +314,7 @@ exports.find = function(req, res) {
             }
             else
             {
-                res.send(user.noToken());
+                res.send(user);
             }
         });
     }
