@@ -22,6 +22,7 @@ var timestamp = (new Date().getTime()).toString();
  *
  * @param String receiverId
  * @param String reward
+ * @param String type
  * @param String description
  * @return Mixed(Challenge + ChallengeBase) data
  */
@@ -61,6 +62,19 @@ exports.newChallenge = function(req, res) {
                 {
                     response.error = "Give me a description!";
                     status = 400;
+                    callback(true);
+                }
+                else if(data.type === undefined)
+                {
+                    response.error = "Give me a type!";
+                    status = 400;
+                    callback(true);
+                }
+                else if(data.type != "video"
+                     && data.type != "picture")
+                {
+                    response.error = "I accept only 'video' and 'picture' as a type!";
+                    status = 422;
                     callback(true);
                 }
                 else if(data.receiverId == user._id)
@@ -124,6 +138,7 @@ exports.newChallenge = function(req, res) {
                 receiver: challenged._id,
                 status: -1,
                 url: "",
+                type: data.type,
                 reward: data.reward,
                 votes: 0,
                 timestamp : timestamp

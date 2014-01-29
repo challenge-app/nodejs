@@ -2,6 +2,7 @@
  * EXTENSIONS
  */
 var bcrypt      = require('bcrypt'),
+    async       = require('async'),
     auth        = require('../config/auth'),
     userModel   = require('../models/user');
 

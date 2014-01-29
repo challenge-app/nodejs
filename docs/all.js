@@ -53,7 +53,8 @@ models.push({
 						"email": "b"
 					},
 					"status": -1,
-					"url": "",
+					"url": "http://youtube.com/SAfakKq=",
+					"type": "video",
 					"reward": 10,
 					"votes": 0,
 					"timestamp": "1390980083413",
@@ -74,6 +75,7 @@ models.push({
 		["receiver", "User", "Who has been challenged."],
 		["status", "Number", "-1: not seen; 0: seen; 1: done; 2: refused"],
 		["url", "String", "Video URL of the challenge."],
+		["type", "String", "Determines if it's 'video' or a 'picture'."],
 		["reward", "Number", "Reputation as reward."],
 		["votes", "Number", "Thumbs up."],
 		["timestamp", "String",  "Last edit timestamp."]
@@ -95,7 +97,8 @@ models.push({
 				"email": "b"
 			},
 			"status": -1,
-			"url": "",
+			"url": "http://youtube.com/SAfakKq=",
+			"type": "video",
 			"reward": 10,
 			"votes": 0,
 			"timestamp": "1390980083413",
@@ -375,10 +378,14 @@ controllers.push({
 				[],
 				["receiverId"],
 				["receiverId", "description"],
-				["receiverId", "description", "reward *"],
+				["receiverId", "description", "type"],
+				["receiverId", "description", "type", "reward *"],
+				["receiverId", "description", "type", "reward *"],
 			],
 			headers: [
 				[],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
 				["X-AUTH-TOKEN"],
 				["X-AUTH-TOKEN"],
 				["X-AUTH-TOKEN"],
@@ -388,7 +395,9 @@ controllers.push({
 				[401, "error", "{ error : \"Please sign-in!\" }"],
 				[400, "error", "{ error : \"Give me an receiverId!\" }"],
 				[400, "error", "{ error : \"Give me a description!\" }"],
+				[400, "error", "{ error : \"Give me a type!\" }"],
 				[422, "error", "{ error : \"User not found!\" }"],
+				[422, "error", "{ error : \"Type must be 'video' or 'picture'!\" }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
 			description: "Will try to create a new <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>.</p>",
@@ -413,7 +422,8 @@ controllers.push({
 						"email": "b"
 					},
 					"status": -1,
-					"url": "",
+					"url": "http://youtube.com/ASfnNk=",
+					"type": "video",
 					"reward": 10,
 					"votes": 0,
 					"timestamp": "1390980083413",
@@ -459,7 +469,8 @@ controllers.push({
 							"email": "b"
 						},
 						"status": -1,
-						"url": "",
+						"url": "http://youtube.com/ASfq@31=",
+						"type": "video",
 						"reward": 10,
 						"votes": 0,
 						"timestamp": "1390980083413",
@@ -506,7 +517,8 @@ controllers.push({
 							"email": "a"
 						},
 						"status": -1,
-						"url": "",
+						"url": "http://youtube.com/ASfq@31=",
+						"type": "video",
 						"reward": 10,
 						"votes": 0,
 						"timestamp": "1390980083413",
@@ -567,7 +579,8 @@ controllers.push({
 						"email": "a"
 					},
 					"status": 1,
-					"url": "youtube.com/AsdaKaq=",
+					"url": "http://youtube.com/ASfq@31=",
+					"type": "picture",
 					"reward": 10,
 					"votes": 0,
 					"timestamp": "1391001669782",
@@ -624,7 +637,8 @@ controllers.push({
 						"email": "a"
 					},
 					"status": 2,
-					"url": "youtube.com/AsdaKaq=",
+					"url": "http://youtube.com/ASfq@31=",
+					"type": "picture",
 					"reward": 10,
 					"votes": 0,
 					"timestamp": "1391001669782",

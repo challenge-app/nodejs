@@ -14,6 +14,7 @@ var challengeSchema = mongoose.Schema({
     receiver: { type: String, ref: 'User' },
     status: Number, //-1: Não viu, 0: Viu mas não aceitou, 1: Viu e aceitou, 2: Viu e recusou
     url: String, //URL DO VIDEO
+    type: String, //Tipo: video/foto
     reward: Number,
     votes: Number,
     timestamp: String
