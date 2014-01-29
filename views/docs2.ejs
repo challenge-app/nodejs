@@ -1,0 +1,63 @@
+doctype html
+html
+	head
+		title
+		meta(charset='utf-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/override.css')
+	body
+		.navbar.navbar-inverse.navbar-fixed-top
+			.navbar-inner
+				.container-fluid
+					a.brand(href='./index.html') Challenge
+		.container
+			.row
+				.span3.nav-fixed
+					ul.nav.nav-pills.nav-stacked
+						li.nav-header Controllers
+						li(data-trigger='user-controller')
+							a(href='#')
+								i.icon-chevron-right
+								| User
+
+						li(data-trigger='challenge-controller')
+							a(href='#')
+								i.icon-chevron-right
+								| Challenge
+
+						li.nav-header Models
+						li(data-trigger='user-model')
+							a(href='#')
+								i.icon-chevron-right
+								| User
+
+						li(data-trigger='challenge-model')
+							a(href='#')
+								i.icon-chevron-right
+								| Challenge
+
+						li(data-trigger='challengeInfo-model')
+							a(href='#')
+								i.icon-chevron-right
+								| ChallengeInfo
+
+				.span3
+				.span9
+					.hero-unit
+						h2 Documentation
+						p Here you will find all necessary documentation for our app API.
+					
+					h1 Controllers
+					section#user-controller
+						article.infos
+							h2 User controller
+							p Here you will manipulate all users info that you need.
+							p Every access will follow <code>/user</code> URL.
+						
+						article.methods
+							h4 Methods
+							-for(var i in challengeRoutes)
+								div
+									p
+										code.supper.blue= challengeRoutes[i].method

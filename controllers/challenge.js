@@ -2,18 +2,19 @@
  * EXTENSIONS
  */
 var bcrypt          = require('bcrypt'),
+    async           = require('async'),
     auth            = require('../config/auth'),
     userModel       = require('../models/user'),
-    friendModel     = require('../models/friend'),
     challengeModel  = require('../models/challenge');
 
 /*
  * MODELS
  */
 var User            = userModel.getUserModel(),
-    Friend          = friendModel.getFriendModel(),
     Challenge       = challengeModel.getChallenge(),
     ChallengeBase   = challengeModel.getChallengeBase();
+
+var timestamp = (new Date().getTime()).toString();
 
 /*
  * [POST] CREATE A CHALLENGE
@@ -29,95 +30,127 @@ exports.newChallenge = function(req, res) {
     var data = req.body;
 
     var response = {};
-    var invalid = false;
-    var status = 400;
+    var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.error = "Please sign in!";
-            invalid = true;
-            status = 401;
-        }
-        else if(data.receiverId === undefined)
-        {
-            response.error = "Give me an receiverId!";
-            invalid = true;
-            status = 400;
-        }
-        else if(data.description === undefined)
-        {
-            response.error = "Give me a description!";
-            invalid = true;
-            status = 400;
-        }
+    var user,
+        challenged,
+        challBase,
+        chall;
 
-        if(invalid)
+    async.series([
+
+        function(callback)
         {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            if(data.receiverId == user._id)
+            auth.isAuthenticated(req, function(retData)
             {
-                response.error = "You can't challenge yourself!";
-                status = 422;
-                res.status(status).send(response);
-            }
-            else
-            {
-                User.findOne({_id : data.receiverId}, function(err, challenged)
+                user = retData;
+
+                if(user == null)
                 {
-                    if(challenged == null)
-                    {
-                        response.error = "User not found!";
-                        status = 422;
-                        res.status(status).send(response);
-                    }
-                    else
-                    {
-                        if(!user.hasFriend(challenged._id))
-                        {
-                            response.error = "You need to be his friend!";
-                            status = 422;
-                            res.status(status).send(response);
-                        }
-                        else
-                        {
-                            var challBase = new ChallengeBase({
-                                description : data.description,
-                                generalVotes : 0
-                            });
+                    response.error = "Please sign in!";
+                    status = 401;
+                    callback(true);
+                }
+                else if(data.receiverId === undefined)
+                {
+                    response.error = "Give me an receiverId!";
+                    status = 400;
+                    callback(true);
+                }
+                else if(data.description === undefined)
+                {
+                    response.error = "Give me a description!";
+                    status = 400;
+                    callback(true);
+                }
+                else if(data.receiverId == user._id)
+                {
+                    response.error = "You cannot challenge yourself!";
+                    status = 422;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            User.findOne({_id : data.receiverId}, function(err, retData)
+            {
+                challenged = retData;
 
-                            challBase.save(function(err, challBase)
-                            {
-                                if(!(data.reward > 0)) data.reward = 0;
+                if(challenged == null)
+                {
+                    response.error = "User not found!";
+                    status = 422;
+                    callback(true);
+                }
+                else if(!user.hasFriend(challenged._id))
+                {
+                    response.error = "You need to be his friend!";
+                    status = 422;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            challBase = new ChallengeBase({
+                description : data.description,
+                generalVotes : 0,
+                timestamp : timestamp
+            });
 
-                                var chall = new Challenge({
-                                    info: challBase._id,
-                                    sender: user._id,
-                                    receiver: challenged._id,
-                                    reward: data.reward,
-                                    votes: 0
-                                });
+            challBase.save(function(err, retData)
+            {
+                challBase = retData;
 
-                                chall.save(function(err, chall)
-                                {
-                                    chall.populate('info').populate('sender').populate('receiver', function(err, chall)
-                                    {
-                                                res.send(chall);
-                                    });
-                                });
-                            });
-                        }
-                    }
+                callback();
+            });
+        },
+        function(callback)
+        {
+            if(!(data.reward > 0)) data.reward = 0;
+            
+            chall = new Challenge({
+                info: challBase._id,
+                sender: user._id,
+                receiver: challenged._id,
+                status: -1,
+                url: "",
+                reward: data.reward,
+                votes: 0,
+                timestamp : timestamp
+            });
+
+            chall.save(function(err, retData)
+            {
+                chall = retData;
+
+                chall
+                .populate('info', '-challenges')
+                .populate('sender', '-friends')
+                .populate('receiver', '-friends', function(err, retData)
+                {
+                    chall = retData;
+
+                    callback();
                 });
-            }
+            });
         }
-    });
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = chall;
 
+        res.status(status).send(response);
+    });
 }
 
 /*
@@ -129,30 +162,52 @@ exports.newChallenge = function(req, res) {
 exports.challengesReceived = function(req, res) {
 
     var response = {};
-    var invalid = false;
-    var status = 400;
+    var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.error = "Please sign in!";
-            invalid = true;
-            status = 401;
-        }
+    var user,
+        challenges;
 
-        if(invalid)
+    async.series([
+
+        function(callback)
         {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            Challenge.find({ receiver : user._id }).populate('info').populate('sender').populate('receiver').exec(function(err, challenges)
+            auth.isAuthenticated(req, function(retData)
             {
-                res.send(challenges);
+                user = retData;
+
+                if(user == null)
+                {
+                    response.error = "Please sign in!";
+                    callback(true);
+                    status = 401;
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            Challenge
+            .find({ receiver : user._id })
+            .sort('-timestamp')
+            .populate('info', '-challenges')
+            .populate('sender', '-friends')
+            .populate('receiver', '-friends')
+            .exec(function(err, retData)
+            {
+                challenges = retData;
+
+                callback();
             });
         }
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = challenges;
+
+        res.status(status).send(response);
     });
 
 }
@@ -166,30 +221,295 @@ exports.challengesReceived = function(req, res) {
 exports.challengesSent = function(req, res) {
 
     var response = {};
-    var invalid = false;
-    var status = 400;
+    var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.error = "Please sign in!";
-            invalid = true;
-            status = 401;
-        }
+    var user,
+        challenges;
 
-        if(invalid)
+    async.series([
+
+        function(callback)
         {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            Challenge.find({ sender : user._id }).populate('info').populate('sender','-friends').populate('receiver','-friends').exec(function(err, challenges)
+            auth.isAuthenticated(req, function(retData)
             {
-                res.send(challenges);
+                user = retData;
+
+                if(user == null)
+                {
+                    response.error = "Please sign in!";
+                    callback(true);
+                    status = 401;
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            Challenge
+            .find({ sender : user._id })
+            .sort('-timestamp')
+            .populate('info', '-challenges')
+            .populate('sender', '-friends')
+            .populate('receiver', '-friends')
+            .exec(function(err, retData)
+            {
+                challenges = retData;
+
+                callback();
             });
         }
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = challenges;
+
+        res.status(status).send(response);
     });
 
+}
+
+/*
+ * [POST] ACCEPT A CHALLENGE
+ * (need to be authed) 
+ *
+ * @param String url
+ * @param String challengeId
+ * @return Mixed(Challenge + ChallengeBase) data
+ */
+exports.acceptChallenge = function(req, res)
+{
+    var data = req.body;
+
+    var response = {};
+    var status = 200;
+
+    var user,
+        challenge;
+
+    async.series([
+
+        function(callback)
+        {
+            auth.isAuthenticated(req, function(retData)
+            {
+                user = retData;
+
+                if(user == null)
+                {
+                    response.error = "Please sign in!";
+                    status = 401;
+                    callback(true);
+                }
+                else if(data.challengeId === undefined)
+                {
+                    response.error = "Give me a challengeId!";
+                    status = 400;
+                    callback(true);
+                }
+                else if(data.url === undefined)
+                {
+                    response.error = "Give me an url!";
+                    status = 400;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            Challenge
+            .findOne({ _id : data.challengeId })
+            .exec(function(err, retData)
+            {
+                challenge = retData;
+
+                if(challenge == null
+                || challenge === undefined)
+                {
+                    response.error = "Challenge not found!";
+                    status = 422;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            if(challenge.receiver != user._id)
+            {
+                response.error = "This challenge does not belong to you!";
+                status = 422;
+                callback(true);
+            }
+            else if(challenge.status > 0)
+            {
+                response.error = "This challenge is finalized!";
+                status = 422;
+                callback(true);
+            }
+            else
+            {
+                callback();
+            }
+        },
+        function(callback)
+        { 
+            challenge.url = data.url;
+            challenge.status = 1;
+            challenge.timestamp = timestamp;
+
+            challenge.save(function(err, retData)
+            {
+                challenge = retData;
+
+                callback();
+            });
+        },
+        function(callback)
+        {            
+            challenge
+            .populate('info', '-challenges')
+            .populate('sender', '-friends')
+            .populate('receiver', '-friends', function(err, retData)
+            {
+                challenge = retData;
+
+                callback();
+            });
+        }
+
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = challenge;
+
+        res.status(status).send(response);
+    });
+
+}
+
+/*
+ * [POST] REFUSE A CHALLENGE
+ * (need to be authed) 
+ *
+ * @param String challengeId
+ * @return Mixed(Challenge + ChallengeBase) data
+ */
+exports.refuseChallenge = function(req, res)
+{
+    var data = req.body;
+
+    var response = {};
+    var status = 200;
+
+    var user,
+        challenge;
+
+    async.series([
+
+        function(callback)
+        {
+            auth.isAuthenticated(req, function(retData)
+            {
+                user = retData;
+
+                if(user == null)
+                {
+                    response.error = "Please sign in!";
+                    status = 401;
+                    callback(true);
+                }
+                else if(data.challengeId === undefined)
+                {
+                    response.error = "Give me a challengeId!";
+                    status = 400;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            Challenge
+            .findOne({ _id : data.challengeId })
+            .exec(function(err, retData)
+            {
+                challenge = retData;
+
+                if(challenge == null
+                || challenge === undefined)
+                {
+                    response.error = "Challenge not found!";
+                    status = 422;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            if(challenge.receiver != user._id)
+            {
+                response.error = "This challenge does not belong to you!";
+                status = 422;
+                callback(true);
+            }
+            else if(challenge.status > 0)
+            {
+                response.error = "This challenge is finalized!";
+                status = 422;
+                callback(true);
+            }
+            else
+            {
+                callback();
+            }
+        },
+        function(callback)
+        { 
+            challenge.status = 2;
+            challenge.timestamp = timestamp;
+
+            challenge.save(function(err, retData)
+            {
+                challenge = retData;
+
+                callback();
+            });
+        },
+        function(callback)
+        {
+            challenge
+            .populate('info', '-challenges')
+            .populate('sender', '-friends')
+            .populate('receiver', '-friends', function(err, retData)
+            {
+                challenge = retData;
+
+                callback();
+            });
+        }
+
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = challenge;
+
+        res.status(status).send(response);
+    });
 }

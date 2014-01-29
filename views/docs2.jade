@@ -1,0 +1,129 @@
+doctype html
+html
+	head
+		title
+		meta(charset='utf-8')
+		meta(http-equiv="X-UA-Compatible", content="IE=edge")
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		link(rel='stylesheet', href='/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/css/override.css')
+	body
+		.navbar.navbar-inverse.navbar-fixed-top
+			.navbar-inner
+				.container-fluid
+					a.brand(href='./index.html') Challenge
+		.container
+			.row
+				.span3.nav-fixed
+					ul.nav.nav-pills.nav-stacked
+						li.nav-header Controllers
+						-for(var i in controllers)
+							li(data-trigger=controllers[i].name+'-controller')
+								a(href='#')
+									i.icon-chevron-right
+									=controllers[i].show
+
+						li.nav-header Models
+						-for(var i in models)
+							li(data-trigger=models[i].name+'-model')
+								a(href='#')
+									i.icon-chevron-right
+									=models[i].show
+
+				.span3
+				.span9
+					.hero-unit
+						h2 Documentation
+						p Here you will find all necessary documentation for our app API.
+					
+					h1 Controllers
+					-for(var i in controllers)
+						section(id=controllers[i].name+"-controller")
+							article.infos
+								h2= controllers[i].show+" controller"
+								p= "Here you will manipulate all "+controllers[i].name+"s info that you need."
+								p!= "Every access will follow <code>/"+controllers[i].name+"</code> URL."
+							
+							article.methods
+								h4 Methods
+								-for(var j in controllers[i].routes)
+									div
+										p
+											code.supper.blue= '['+controllers[i].routes[j].method+']'
+											code.supper= controllers[i].routes[j].routeName
+										p!= controllers[i].routes[j].description
+
+										table.table.table-bordered.table-stripped
+											thead
+												td Parameters
+												td Headers
+												td Status code
+												td Return
+											tbody
+												-for(var k in controllers[i].routes[j].params)
+													tr(class=controllers[i].routes[j].returns[k][1])
+														td
+															-for(var l in controllers[i].routes[j].params[k])
+																code.normal= '$'+controllers[i].routes[j].params[k][l]
+
+														td
+															-for(var l in controllers[i].routes[j].headers[k])
+																code.normal= controllers[i].routes[j].headers[k][l]
+
+														td
+															case controllers[i].routes[j].returns[k][0]
+																when 400
+																	| 400 Bad Request
+																when 401
+																	| 401 Unauthorized
+																when 422
+																	| 422 Unprocessable entity
+																when 200
+																	| 200 OK
+
+														td
+															code.normal!= controllers[i].routes[j].returns[k][2]	
+										if(controllers[i].routes[j].example.length > 0)
+											h5 Example
+											.blockcode
+												-for(var k in controllers[i].routes[j].example)
+													-if(typeof controllers[i].routes[j].example[k] == "object")
+														p
+															pre= JSON.stringify(controllers[i].routes[j].example[k], undefined, 4)
+													-else
+														p= controllers[i].routes[j].example[k]
+									hr
+					h1 Models
+					-for(var i in models)
+						section(id=models[i].name+"-model")
+							article
+								h2= models[i].show+" model"
+								p Here you will see it's schema.
+								table.table.table-bordered.table-stripped
+									thead 
+										td Parameter
+										td Type
+										td Description
+									tbody
+										-for(var j in models[i].content)
+											tr 
+												td
+													code.normal= "$"+models[i].content[j][0]
+												td
+													span.type
+														case models[i].content[j][1]
+															when "String"
+																| String
+															when "Number"
+																| Number
+															default
+																a(href="#", data-trigger=models[i].content[j][1].toLowerCase()+"-model")
+																	=models[i].content[j][1]
+												td=models[i].content[j][2]
+								h5 Example
+								pre= JSON.stringify(models[i].example[0], undefined, 4)
+						hr
+
+	script(src="http://code.jquery.com/jquery-1.10.2.min.js")
+	script(src="js/bootstrap.min.js")
+	script(src="js/override.js")

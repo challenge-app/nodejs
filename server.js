@@ -24,7 +24,15 @@ var app 	= express();
  * FOR RENDERING HTML
  */
 app.set('/views', express.static(__dirname + '/views'));
-app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'jade')
+
+/*app.use(stylus.middleware(
+	{
+		src: __dirname + '/public',
+		compile: compile
+	}
+));*/
+//app.engine('html', require('ejs').renderFile);
 
 /*
  * ACCESS PUBLIC FOLDER
@@ -80,6 +88,8 @@ app.get('/challenge/sent', challenge.challengesSent);
  * CHALLENGE POST ROUTES
  */
 app.post('/challenge', challenge.newChallenge);
+app.post('/challenge/accept', challenge.acceptChallenge);
+app.post('/challenge/refuse', challenge.refuseChallenge);
 
 /*
  * START IN PORT 3000

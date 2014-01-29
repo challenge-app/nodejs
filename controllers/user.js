@@ -3,14 +3,12 @@
  */
 var bcrypt      = require('bcrypt'),
     auth        = require('../config/auth'),
-    userModel   = require('../models/user'),
-    friendModel = require('../models/friend');
+    userModel   = require('../models/user');
 
 /*
  * MODELS
  */
-var User    = userModel.getUserModel(),
-    Friend  = friendModel.getFriendModel();
+var User = userModel.getUserModel();
 
 /*
  * [POST] ADD A NEW FRIEND
@@ -118,7 +116,7 @@ exports.getFriends = function(req, res) {
         }
         else
         {
-            user.populate('friends','-friends', function(err, user)
+            user.populate('friends','-friends -authenticationToken', function(err, user)
             {
                 user.noToken();
                 res.send(user);

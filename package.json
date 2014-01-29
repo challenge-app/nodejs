@@ -7,6 +7,8 @@
 		"express": "3.x",
 		"mongodb": "1.2.x",
 		"bcrypt": "0.x",
-		"mongoose": "latest"
+		"mongoose": "latest",
+		"async": "latest",
+		"jade": "latest"
 	}
 }

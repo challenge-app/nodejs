@@ -87,3 +87,7 @@ p.important {
 p.tab1 {
 	padding-left: 80px !important;
 }
+
+pre {
+	background-color: #FDFDFD;
+}
