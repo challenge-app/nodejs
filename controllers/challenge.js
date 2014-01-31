@@ -371,8 +371,8 @@ exports.likeChallenge = function(req, res)
                     likeDoubt = new LikeDoubt({
                         userId : user._id,
                         challengeId : data.challengeId,
-                        liked : 0,
-                        doubted : 0
+                        liked : false,
+                        doubted : false
                     });
                 }
 
@@ -382,26 +382,46 @@ exports.likeChallenge = function(req, res)
         },
         function(callback)
         {
+            var error = false;
+
             if(challenge.status == 1)
             {
-                challenge.likes++;
+                if(likeDoubt.liked)
+                {
+                    response.error = "Already liked!";
+                    status = 422;
+                    error = true;
+                }
+                else
+                {
+                    challenge.likes++;
 
-                likeDoubt.liked++;
+                    likeDoubt.liked = true;
+                }
             }
             else if(challenge.status <= 0)
             {
-                challenge.doubts++;
+                if(likeDoubt.doubted)
+                {
+                    response.error = "Already doubted!";
+                    status = 422;
+                    error = true;
+                }
+                else
+                {
+                    challenge.doubts++;
 
-                likeDoubt.doubted++;
+                    likeDoubt.doubted = true;
+                }
             }
-
+            
             if(challenge.status == 2)
             {
                 response.error = "Challenge is refused!";
                 status = 422;
                 callback(true);
             }
-            else
+            else if(!error)
             {
                 challenge.save(function(err, retData)
                 {
@@ -414,6 +434,10 @@ exports.likeChallenge = function(req, res)
 
                     callback();
                 });
+            }
+            else
+            {
+                callback(true);
             }
         },
         function(callback)

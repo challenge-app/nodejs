@@ -563,9 +563,13 @@ controllers.push({
 				["challengeId"],
 				["challengeId"],
 				["challengeId"],
+				["challengeId"],
+				["challengeId"],
 			],
 			headers: [
 				[],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
 				["X-AUTH-TOKEN"],
 				["X-AUTH-TOKEN"],
 				["X-AUTH-TOKEN"],
@@ -576,6 +580,8 @@ controllers.push({
 				[400, "error", "{ error : \"Give me an challengeId!\" }"],
 				[422, "error", "{ error : \"Challenge not found!\" }"],
 				[422, "error", "{ error : \"Challenge refused!\" }"],
+				[422, "error", "{ error : \"Already liked!\" }"],
+				[422, "error", "{ error : \"Already doubted!\" }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
 			description: "Will try to set <code>liked</code> or <code>doubted</code> (depends of the challenge status) to <code>TRUE</code> on <a href=\"#\" data-trigger=\"likedoubt-model\">LikeDoubt</a> model.</p>",
