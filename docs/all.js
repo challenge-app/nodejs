@@ -32,14 +32,14 @@ models.push({
 	content: [
 		["_id", "String", "ID"],
 		["description", "String", "Description of the challenge."],
-		["generalVotes", "Number", "All thumbs up."],
+		["generalLikes", "Number", "All thumbs up."],
 		["challenges", "Challenge", "Array of challenges."],
 		["timestamp", "String", "Last edit timestamp."]
 	],
 	example: [
 		{
 			"description": "I dare you to walk with a horse mask!",
-			"generalVotes": 0,
+			"generalLikes": 0,
 			"timestamp": "1390980083413",
 			"_id": "52e8abf53d7dd12f76eeb1a7",
 			"challenges" : [
@@ -56,7 +56,8 @@ models.push({
 					"url": "http://youtube.com/SAfakKq=",
 					"type": "video",
 					"reward": 10,
-					"votes": 0,
+					"likes": 0,
+					"doubts": 1,
 					"timestamp": "1390980083413",
 					"_id": "52e8abf53d7dd12f76eeb1a8"
 				}
@@ -77,14 +78,15 @@ models.push({
 		["url", "String", "Video URL of the challenge."],
 		["type", "String", "Determines if it's 'video' or a 'picture'."],
 		["reward", "Number", "Reputation as reward."],
-		["votes", "Number", "Thumbs up."],
+		["likes", "Number", "Thumbs up."],
+		["doubts", "Number", "Doubts up."],
 		["timestamp", "String",  "Last edit timestamp."]
 	],
 	example: [
 		{
 			"info": {
 				"description": "I dare you to walk with a horse mask!",
-				"generalVotes": 0,
+				"generalLikes": 0,
 				"timestamp": "1390980083413",
 				"_id": "52e8abf53d7dd12f76eeb1a7"
 			},
@@ -100,8 +102,30 @@ models.push({
 			"url": "http://youtube.com/SAfakKq=",
 			"type": "video",
 			"reward": 10,
-			"votes": 0,
+			"likes": 0,
+			"doubts": 2,
 			"timestamp": "1390980083413",
+			"_id": "52e8abf53d7dd12f76eeb1a8"
+		}
+	]
+});
+
+models.push({
+	name: "likedoubt",
+	show: "LikeDoubt",
+	content: [
+		["_id", "String", "ID"],
+		["userId", "String", "User ID."],
+		["challengeId", "String", "Challenge ID."],
+		["liked", "Boolean", "If the user liked."],
+		["doubted", "Boolean", "If the user doubted."]
+	],
+	example: [
+		{
+			"doubted": true,
+			"liked": false,
+			"challengeId": "22e8abf53d7dd12f76eeb109",
+			"userId": "82e8abf53d7dd12f76eeb1a1",
 			"_id": "52e8abf53d7dd12f76eeb1a8"
 		}
 	]
@@ -409,7 +433,7 @@ controllers.push({
 				{
 					"info": {
 						"description": "I dare you to walk with a horse mask!",
-						"generalVotes": 0,
+						"generalLikes": 0,
 						"timestamp": "1390980083413",
 						"_id": "52e8abf53d7dd12f76eeb1a7"
 					},
@@ -425,7 +449,8 @@ controllers.push({
 					"url": "http://youtube.com/ASfnNk=",
 					"type": "video",
 					"reward": 10,
-					"votes": 0,
+					"likes": 0,
+					"doubts": 1,
 					"timestamp": "1390980083413",
 					"_id": "52e8abf53d7dd12f76eeb1a8"
 				}
@@ -456,7 +481,7 @@ controllers.push({
 					{
 						"info": {
 							"description": "I dare you to walk with a horse mask!",
-							"generalVotes": 0,
+							"generalLikes": 0,
 							"timestamp": "1390980083413",
 							"_id": "52e8abf53d7dd12f76eeb1a7"
 						},
@@ -472,7 +497,8 @@ controllers.push({
 						"url": "http://youtube.com/ASfq@31=",
 						"type": "video",
 						"reward": 10,
-						"votes": 0,
+						"likes": 0,
+						"doubts": 0,
 						"timestamp": "1390980083413",
 						"_id": "52e8abf53d7dd12f76eeb1a8"
 					}
@@ -504,7 +530,7 @@ controllers.push({
 					{
 						"info": {
 							"description": "I dare you to walk with a horse mask!",
-							"generalVotes": 0,
+							"generalLikes": 0,
 							"timestamp": "1390980083413",
 							"_id": "52e8abf53d7dd12f76eeb1a7"
 						},
@@ -520,7 +546,66 @@ controllers.push({
 						"url": "http://youtube.com/ASfq@31=",
 						"type": "video",
 						"reward": 10,
-						"votes": 0,
+						"likes": 0,
+						"doubts": 0,
+						"timestamp": "1390980083413",
+						"_id": "52e8abf53d7dd12f76eeb1a8"
+					}
+				]
+			]
+		},
+		{
+			routeName: "/like",
+			method: "POST",
+			params: [
+				[],
+				[],
+				["challengeId"],
+				["challengeId"],
+				["challengeId"],
+			],
+			headers: [
+				[],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+			],
+			returns: [
+				[401, "error", "{ error : \"Please sign-in!\" }"],
+				[400, "error", "{ error : \"Give me an challengeId!\" }"],
+				[422, "error", "{ error : \"Challenge not found!\" }"],
+				[422, "error", "{ error : \"Challenge refused!\" }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
+			],
+			description: "Will try to set <code>liked</code> or <code>doubted</code> (depends of the challenge status) to <code>TRUE</code> on <a href=\"#\" data-trigger=\"likedoubt-model\">LikeDoubt</a> model.</p>",
+			example: [
+				'[POST] URL /challenge/like',
+				'PARAMETERS { challengeId : "52e8abf53d7dd12f76eeb1a7" }',
+				'HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
+				'STATUS 200 OK',
+				[
+					{
+						"info": {
+							"description": "I dare you to walk with a horse mask!",
+							"generalLikes": 0,
+							"timestamp": "1390980083413",
+							"_id": "52e8abf53d7dd12f76eeb1a7"
+						},
+						"sender": {
+							"_id": "52e863ecfc1c741857d152f7",
+							"email": "b"
+						},
+						"receiver": {
+							"_id": "52e863d7fc1c741857d152f6",
+							"email": "a"
+						},
+						"status": 1,
+						"url": "http://youtube.com/ASfq@31=",
+						"type": "video",
+						"reward": 10,
+						"likes": 4,
+						"doubts": 123,
 						"timestamp": "1390980083413",
 						"_id": "52e8abf53d7dd12f76eeb1a8"
 					}
@@ -566,7 +651,7 @@ controllers.push({
 				{
 					"info": {
 						"description": "DUvido",
-						"generalVotes": 0,
+						"generalLikes": 0,
 						"timestamp": "1391001669782",
 						"_id": "52e9009e0d8fe3510199b118"
 					},
@@ -582,7 +667,8 @@ controllers.push({
 					"url": "http://youtube.com/ASfq@31=",
 					"type": "picture",
 					"reward": 10,
-					"votes": 0,
+					"likes": 5,
+					"doubts": 1,
 					"timestamp": "1391001669782",
 					"_id": "52e9009e0d8fe3510199b119"
 				}
@@ -624,7 +710,7 @@ controllers.push({
 				{
 					"info": {
 						"description": "DUvido",
-						"generalVotes": 0,
+						"generalLikes": 0,
 						"timestamp": "1391001669782",
 						"_id": "52e9009e0d8fe3510199b118"
 					},
@@ -640,7 +726,8 @@ controllers.push({
 					"url": "http://youtube.com/ASfq@31=",
 					"type": "picture",
 					"reward": 10,
-					"votes": 0,
+					"likes": 0,
+					"doubts": 2,
 					"timestamp": "1391001669782",
 					"_id": "52e9009e0d8fe3510199b119"
 				}

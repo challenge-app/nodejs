@@ -8,6 +8,7 @@ var express = require('express');
  */
 var user 				= require('./controllers/user'),
     challenge 	= require('./controllers/challenge'),
+    newsletter 	= require('./controllers/newsletter'),
     docs 				= require('./controllers/docs');
 
 /*
@@ -88,8 +89,14 @@ app.get('/challenge/sent', challenge.challengesSent);
  * CHALLENGE POST ROUTES
  */
 app.post('/challenge', challenge.newChallenge);
+app.post('/challenge/like', challenge.likeChallenge);
 app.post('/challenge/accept', challenge.acceptChallenge);
 app.post('/challenge/refuse', challenge.refuseChallenge);
+
+/*
+ * NEWSLETTER POST ROUTES
+ */
+app.post('/newsletter', newsletter.addEmail);
 
 /*
  * START IN PORT 3000

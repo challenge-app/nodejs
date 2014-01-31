@@ -5,7 +5,9 @@ var userSchema = mongoose.Schema({
     email: String,
     password: String,
     authenticationToken: String,
-  	friends : [{ type: Schema.Types.ObjectId, ref: 'User' }]
+  	friends : [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  	picture : String,
+  	reputation : Number
 })
 
 userSchema.set('toJSON', {

@@ -3,8 +3,9 @@ var	mongoose = require('mongoose'),
 
 var challengeBaseSchema = mongoose.Schema({
     description: String,
-    generalVotes: Number,
+    generalLikes: Number,
   	challenges: [{ type: Schema.Types.ObjectId, ref: 'Challenge' }],
+  	doubt: Number,
   	timestamp: String
 });
 
@@ -15,8 +16,9 @@ var challengeSchema = mongoose.Schema({
     status: Number, //-1: Não viu, 0: Viu mas não aceitou, 1: Viu e aceitou, 2: Viu e recusou
     url: String, //URL DO VIDEO
     type: String, //Tipo: video/foto
-    reward: Number,
-    votes: Number,
+    reward: String,
+    likes: Number,
+    doubts: Number,
     timestamp: String
 });
 

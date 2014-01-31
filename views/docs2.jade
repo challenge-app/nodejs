@@ -116,6 +116,8 @@ html
 																| String
 															when "Number"
 																| Number
+															when "Boolean"
+																| Boolean
 															default
 																a(href="#", data-trigger=models[i].content[j][1].toLowerCase()+"-model")
 																	=models[i].content[j][1]

@@ -5,14 +5,16 @@ var bcrypt          = require('bcrypt'),
     async           = require('async'),
     auth            = require('../config/auth'),
     userModel       = require('../models/user'),
-    challengeModel  = require('../models/challenge');
+    challengeModel  = require('../models/challenge'),
+    likeDoubtModel  = require('../models/like_doubt');
 
 /*
  * MODELS
  */
 var User            = userModel.getUserModel(),
     Challenge       = challengeModel.getChallenge(),
-    ChallengeBase   = challengeModel.getChallengeBase();
+    ChallengeBase   = challengeModel.getChallengeBase(),
+    LikeDoubt       = likeDoubtModel.getLikeDoubtModel();
 
 var timestamp = (new Date().getTime()).toString();
 
@@ -117,7 +119,7 @@ exports.newChallenge = function(req, res) {
         {
             challBase = new ChallengeBase({
                 description : data.description,
-                generalVotes : 0,
+                generalLikes : 0,
                 timestamp : timestamp
             });
 
@@ -140,7 +142,8 @@ exports.newChallenge = function(req, res) {
                 url: "",
                 type: data.type,
                 reward: data.reward,
-                votes: 0,
+                likes: 0,
+                doubts: 0,
                 timestamp : timestamp
             });
 
@@ -284,6 +287,154 @@ exports.challengesSent = function(req, res) {
         res.status(status).send(response);
     });
 
+}
+
+/*
+ * [POST] LIKE A CHALLENGE
+ * (need to be authed) 
+ *
+ * @param String challengeId
+ * @return Mixed(Challenge + ChallengeBase) data
+ */
+exports.likeChallenge = function(req, res)
+{
+    var data = req.body;
+
+    var response = {};
+    var status = 200;
+
+    var user,
+        challenge,
+        likeDoubt;
+
+    async.series([
+
+        function(callback)
+        {
+            auth.isAuthenticated(req, function(retData)
+            {
+                user = retData;
+
+                if(user == null)
+                {
+                    response.error = "Please sign in!";
+                    status = 401;
+                    callback(true);
+                }
+                else if(data.challengeId === undefined)
+                {
+                    response.error = "Give me a challengeId!";
+                    status = 400;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            Challenge
+            .findOne({ _id : data.challengeId })
+            .exec(function(err, retData)
+            {
+                challenge = retData;
+
+                if(challenge == null
+                || challenge === undefined)
+                {
+                    response.error = "Challenge not found!";
+                    status = 422;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            LikeDoubt
+            .findOne({
+                userId : user._id,
+                challengeId : data.challengeId
+            })
+            .exec(function(err, retData){
+
+                likeDoubt = retData;
+
+                if(likeDoubt == null
+                || likeDoubt === undefined)
+                {
+                    likeDoubt = new LikeDoubt({
+                        userId : user._id,
+                        challengeId : data.challengeId,
+                        liked : 0,
+                        doubted : 0
+                    });
+                }
+
+                callback();
+
+            });
+        },
+        function(callback)
+        {
+            if(challenge.status == 1)
+            {
+                challenge.likes++;
+
+                likeDoubt.liked++;
+            }
+            else if(challenge.status <= 0)
+            {
+                challenge.doubts++;
+
+                likeDoubt.doubted++;
+            }
+
+            if(challenge.status == 2)
+            {
+                response.error = "Challenge is refused!";
+                status = 422;
+                callback(true);
+            }
+            else
+            {
+                challenge.save(function(err, retData)
+                {
+                    challenge = retData;
+
+                    likeDoubt.save(function(err, retData)
+                    {
+                        likeDoubt = retData;
+                    });
+
+                    callback();
+                });
+            }
+        },
+        function(callback)
+        {            
+            challenge
+            .populate('info', '-challenges')
+            .populate('sender', '-friends')
+            .populate('receiver', '-friends', function(err, retData)
+            {
+                challenge = retData;
+
+                callback();
+            });
+        }
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = challenge;
+
+        res.status(status).send(response);
+    });
 }
 
 /*
