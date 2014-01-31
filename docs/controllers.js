@@ -1,135 +1,4 @@
-var models = [],
-		controllers = [];
-
-models.push({
-	name: "user",
-	show: "User",
-	content: [
-		["_id", "String", "ID"],
-		["email", "String", "User email."],
-		["password", "String", "User password."],
-		["authenticationToken", "String", "X-AUTH-TOKEN"],
-		["friends", "User", "Array of users."]
-	],
-	example: [
-		{
-			"_id": "52e863d7fc1c741857d152f6",
-			"email": "a",
-			"authenticationToken": "$2a$12$yvxdiZlYhdy7KF.wwH.J9eaeJ/UytKfsqfZ4FPt4ryoFbQdA24kDe",
-			"friends": [
-				{
-					"_id": "52e863ecfc1c741857d152f7",
-					"email": "b"
-				}
-			]
-		}
-	]
-})
-
-models.push({
-	name: "challengebase",
-	show: "ChallengeBase",
-	content: [
-		["_id", "String", "ID"],
-		["description", "String", "Description of the challenge."],
-		["generalLikes", "Number", "All thumbs up."],
-		["challenges", "Challenge", "Array of challenges."],
-		["timestamp", "String", "Last edit timestamp."]
-	],
-	example: [
-		{
-			"description": "I dare you to walk with a horse mask!",
-			"generalLikes": 0,
-			"timestamp": "1390980083413",
-			"_id": "52e8abf53d7dd12f76eeb1a7",
-			"challenges" : [
-				{
-					"sender": {
-						"_id": "52e863d7fc1c741857d152f6",
-						"email": "a"
-					},
-					"receiver": {
-						"_id": "52e863ecfc1c741857d152f7",
-						"email": "b"
-					},
-					"status": -1,
-					"url": "http://youtube.com/SAfakKq=",
-					"type": "video",
-					"reward": 10,
-					"likes": 0,
-					"doubts": 1,
-					"timestamp": "1390980083413",
-					"_id": "52e8abf53d7dd12f76eeb1a8"
-				}
-			]
-		}
-	]
-});
-
-models.push({
-	name: "challenge",
-	show: "Challenge",
-	content: [
-		["_id", "String", "ID"],
-		["info", "ChallengeBase", "Challenge info."],
-		["sender", "User", "The challenger."],
-		["receiver", "User", "Who has been challenged."],
-		["status", "Number", "-1: not seen; 0: seen; 1: done; 2: refused"],
-		["url", "String", "Video URL of the challenge."],
-		["type", "String", "Determines if it's 'video' or a 'picture'."],
-		["reward", "Number", "Reputation as reward."],
-		["likes", "Number", "Thumbs up."],
-		["doubts", "Number", "Doubts up."],
-		["timestamp", "String",  "Last edit timestamp."]
-	],
-	example: [
-		{
-			"info": {
-				"description": "I dare you to walk with a horse mask!",
-				"generalLikes": 0,
-				"timestamp": "1390980083413",
-				"_id": "52e8abf53d7dd12f76eeb1a7"
-			},
-			"sender": {
-				"_id": "52e863d7fc1c741857d152f6",
-				"email": "a"
-			},
-			"receiver": {
-				"_id": "52e863ecfc1c741857d152f7",
-				"email": "b"
-			},
-			"status": -1,
-			"url": "http://youtube.com/SAfakKq=",
-			"type": "video",
-			"reward": 10,
-			"likes": 0,
-			"doubts": 2,
-			"timestamp": "1390980083413",
-			"_id": "52e8abf53d7dd12f76eeb1a8"
-		}
-	]
-});
-
-models.push({
-	name: "likedoubt",
-	show: "LikeDoubt",
-	content: [
-		["_id", "String", "ID"],
-		["userId", "String", "User ID."],
-		["challengeId", "String", "Challenge ID."],
-		["liked", "Boolean", "If the user liked."],
-		["doubted", "Boolean", "If the user doubted."]
-	],
-	example: [
-		{
-			"doubted": true,
-			"liked": false,
-			"challengeId": "22e8abf53d7dd12f76eeb109",
-			"userId": "82e8abf53d7dd12f76eeb1a1",
-			"_id": "52e8abf53d7dd12f76eeb1a8"
-		}
-	]
-});
+var controllers = [];
 
 controllers.push({
 	name: "user",
@@ -151,9 +20,9 @@ controllers.push({
 				[],
 			],
 			returns: [
-				[400, "error", "{ error : \"I need an email!\" }"],
-				[400, "error", "{ error : \"I need a password!\" }"],
-				[422, "error", "{ error : \"User already exists!\" }"],
+				[400, "error", "{ code : 1 }"],
+				[400, "error", "{ code : 2 }"],
+				[422, "error", "{ code : 9 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to create a new <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
@@ -181,7 +50,7 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Please sign-in!\" }"],
+				[401, "error", "{ code : 10 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to recover current <a href=\"#\" data-trigger=\"user-model\">User</a> in session.</p>",
@@ -208,7 +77,7 @@ controllers.push({
 				[],
 			],
 			returns: [
-				[422, "error", "{ error : \"User not found!\" }"],
+				[422, "error", "{ code : 11 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> by his $_id.</p>",
@@ -237,8 +106,8 @@ controllers.push({
 				[],
 			],
 			returns: [
-				[400, "error", "{ error : \"I need an email!\" }"],
-				[422, "error", "{ error : \"User not found!\" }"],
+				[400, "error", "{ code : 1 }"],
+				[422, "error", "{ code : 11 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> by his $email.</p>",
@@ -271,10 +140,10 @@ controllers.push({
 				[],
 			],
 			returns: [
-				[400, "error", "{ error : \"I need an email!\" }"],
-				[422, "error", "{ error : \"User not found!\" }"],
-				[400, "error", "{ error : \"I need a password!\" }"],
-				[400, "error", "{ error : \"Password incorrect!\" }"],
+				[400, "error", "{ code : 1 }"],
+				[422, "error", "{ code : 11 }"],
+				[400, "error", "{ code : 2 }"],
+				[400, "error", "{ code : 12 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to auth a <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
@@ -302,7 +171,7 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Unauthorized!\" }"],
+				[401, "error", "{ code : 10 }"],
 				[200, "success", "{ message : \"You are out!\" }"]
 			],
 			description: "Will try to unauth a <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
@@ -328,7 +197,7 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Unauthorized!\" }"],
+				[401, "error", "{ code : 10 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> collection (his friends).</p>",
@@ -365,10 +234,10 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Please sign-in!\" }"],
-				[400, "error", "{ error : \"Give me an _id!\" }"],
-				[422, "error", "{ error : \"User not found!\" }"],
-				[422, "error", "{ error : \"He is already your friend!\" }"],
+				[401, "error", "{ code : 10 }"],
+				[400, "error", "{ code : 3 }"],
+				[422, "error", "{ code : 11 }"],
+				[422, "error", "{ code : 14 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
 			description: "Will try to add a new friend of <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
@@ -416,12 +285,12 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Please sign-in!\" }"],
-				[400, "error", "{ error : \"Give me an receiverId!\" }"],
-				[400, "error", "{ error : \"Give me a description!\" }"],
-				[400, "error", "{ error : \"Give me a type!\" }"],
-				[422, "error", "{ error : \"User not found!\" }"],
-				[422, "error", "{ error : \"Type must be 'video' or 'picture'!\" }"],
+				[401, "error", "{ code : 10 }"],
+				[400, "error", "{ code : 4 }"],
+				[400, "error", "{ code : 5 }"],
+				[400, "error", "{ code : 6 }"],
+				[422, "error", "{ code : 11 }"],
+				[422, "error", "{ code : 15 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
 			description: "Will try to create a new <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>.</p>",
@@ -468,7 +337,7 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Please sign-in!\" }"],
+				[401, "error", "{ code : 10 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge []</a>"]
 			],
 			description: "Will try to get all received <a href=\"#\" data-trigger=\"challenge-model\">Challenges</a>.</p>",
@@ -517,7 +386,7 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Please sign-in!\" }"],
+				[401, "error", "{ code : 10 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge []</a>"]
 			],
 			description: "Will try to get all sent <a href=\"#\" data-trigger=\"challenge-model\">Challenges</a>.</p>",
@@ -576,12 +445,12 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[401, "error", "{ error : \"Please sign-in!\" }"],
-				[400, "error", "{ error : \"Give me an challengeId!\" }"],
-				[422, "error", "{ error : \"Challenge not found!\" }"],
-				[422, "error", "{ error : \"Challenge refused!\" }"],
-				[422, "error", "{ error : \"Already liked!\" }"],
-				[422, "error", "{ error : \"Already doubted!\" }"],
+				[401, "error", "{ code : 10 }"],
+				[400, "error", "{ code : 7 }"],
+				[422, "error", "{ code : 16 }"],
+				[422, "error", "{ code : 17 }"],
+				[422, "error", "{ code : 18 }"],
+				[422, "error", "{ code : 19 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
 			description: "Will try to set <code>liked</code> or <code>doubted</code> (depends of the challenge status) to <code>TRUE</code> on <a href=\"#\" data-trigger=\"likedoubt-model\">LikeDoubt</a> model.</p>",
@@ -640,12 +509,12 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[400, "error", "{ error : \"Give me a challengeId!\" }"],
-				[400, "error", "{ error : \"Give me an url!\" }"],
-				[401, "error", "{ error : \"Please sign in!\" }"],
-				[422, "error", "{ error : \"Challenge not found!\" }"],
-				[422, "error", "{ error : \"This challenge does not belong to you!\" }"],
-				[422, "error", "{ error : \"This challenge is finalized!\" }"],
+				[400, "error", "{ code : 7 }"],
+				[400, "error", "{ code : 8 }"],
+				[401, "error", "{ code : 10 }"],
+				[422, "error", "{ code : 16 }"],
+				[422, "error", "{ code : 20 }"],
+				[422, "error", "{ code : 21 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
 			description: "Will try to accept a <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>.</p>",
@@ -700,11 +569,11 @@ controllers.push({
 				["X-AUTH-TOKEN"],
 			],
 			returns: [
-				[400, "error", "{ error : \"Give me a challengeId!\" }"],
-				[401, "error", "{ error : \"Please sign in!\" }"],
-				[422, "error", "{ error : \"Challenge not found!\" }"],
-				[422, "error", "{ error : \"This challenge does not belong to you!\" }"],
-				[422, "error", "{ error : \"This challenge is finalized!\" }"],
+				[400, "error", "{ code : 7 }"],
+				[401, "error", "{ code : 10 }"],
+				[422, "error", "{ code : 16 }"],
+				[422, "error", "{ code : 20 }"],
+				[422, "error", "{ code : 21 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
 			description: "Will try to refuse a <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>.</p>",
@@ -741,11 +610,6 @@ controllers.push({
 		}
 	]
 });
-
-exports.getModels = function()
-{
-	return models;
-}
 
 exports.getControllers = function()
 {

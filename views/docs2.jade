@@ -30,6 +30,12 @@ html
 									i.icon-chevron-right
 									=models[i].show
 
+						li.nav-header Miscellaneous
+						li(data-trigger='errors-section')
+							a(href='#')
+								i.icon-chevron-right
+								| Error codes
+
 				.span3
 				.span9
 					.hero-unit
@@ -124,6 +130,22 @@ html
 												td=models[i].content[j][2]
 								h5 Example
 								pre= JSON.stringify(models[i].example[0], undefined, 4)
+						hr
+
+					h1 Miscellaneous
+					section#errors-section
+						article
+							h2 Error codes
+							p Here you will see all error codes and its description.
+							table.table.table-bordered.table-stripped
+								thead 
+									td #
+									td Description
+								tbody
+									-for(var i in errors)
+										tr 
+											td= errors[i].code
+											td= errors[i].description
 						hr
 
 	script(src="http://code.jquery.com/jquery-1.10.2.min.js")

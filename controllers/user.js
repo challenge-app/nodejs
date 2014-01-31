@@ -30,13 +30,13 @@ exports.addFriend = function(req, res) {
     {
         if(user == null)
         {
-            response.error = "Please sign in!";
+            response.code = 10;
             invalid = true;
             status = 401;
         }
         else if(data._id === undefined)
         {
-            response.error = "Give me an id!";
+            response.code = 3;
             invalid = true;
             status = 400;
         }
@@ -52,7 +52,7 @@ exports.addFriend = function(req, res) {
             {
                 if(friendUser === null)
                 {
-                    response.error = "User not found!";
+                    response.code = 11;
 
                     res.status(422).send(response);
                     console.log('Error: invalid request "'+JSON.stringify(response)+'"');
@@ -61,7 +61,7 @@ exports.addFriend = function(req, res) {
                 {
 		    if(user.friends.indexOf(data._id) != -1)
 		    {
-			response.error = "He is already your friend";
+			response.code = 14;
 			
 			res.status(422).send(response);
 		    }
@@ -105,7 +105,7 @@ exports.getFriends = function(req, res) {
     {
         if(user == null)
         {
-            response.error = "Please sign-in!";
+            response.code = 10;
             status = 401
             invalid = true;
         }
@@ -143,7 +143,7 @@ exports.auth = function(req, res) {
     {
         var response = {};
 
-        response.error = "Give me an email!";
+        response.code = 1;
 
         res.status(400).send(response);
     }
@@ -157,18 +157,18 @@ exports.auth = function(req, res) {
 
         if(item === null)
         {
-            response.error = "User not found!";
+            response.code = 11;
             status = 422;
             invalid = true;
         }
         else if(user.password === undefined)
         {
-            response.error = "Need a password!";
+            response.code = 2;
             invalid = true;
         }
         else if(!bcrypt.compareSync(user.password, item.password))
         {
-            response.error = "Password incorrect!";
+            response.code = 12;
             invalid = true;
         }
 
@@ -209,7 +209,7 @@ exports.unAuth = function(req, res) {
     {
         if(user == null)
         {
-            response.message = "You are already out!";
+            response.message = 13;
             res.status(200).send(response);
         }
         else
@@ -220,7 +220,7 @@ exports.unAuth = function(req, res) {
 
             user.save(function(err, user)
             {
-                response.message = "You are out!";
+                response.message = 13;
                 res.status(200).send(response);
             });
         }
@@ -241,7 +241,7 @@ exports.findMe = function(req, res) {
     {
         if(user == null)
         {
-            response.error = "Please sign-in!";
+            response.code = 10;
             res.status(401).send(response);
         }
         else
@@ -272,7 +272,7 @@ exports.findById = function(req, res) {
         {
             var response = {};
 
-            response.error = "User not found!";
+            response.code = 11;
             res.status(422).send(response);
         }
     });
@@ -293,7 +293,7 @@ exports.find = function(req, res) {
 
     if(data.email === undefined)
     {
-        response.error = "I need an email!";
+        response.code = 1;
         invalid = true;
     }
 
@@ -308,7 +308,7 @@ exports.find = function(req, res) {
         {
             if(user == null)
             {
-                response.error = "User not found!";
+                response.code = 11;
                 res.status(422).send(response);
             }
             else
@@ -354,12 +354,12 @@ exports.addUser = function(req, res) {
 
     if(user.email === undefined)
     {
-        response.error = "I need an email!";
+        response.code = 1;
         invalid = true;
     }
     else if(user.password === undefined)
     {
-        response.error = "I need a password!";
+        response.code = 2;
         invalid = true;
     }
 
@@ -388,7 +388,7 @@ exports.addUser = function(req, res) {
             }
             else
             {
-                response.error = "User already exists!";
+                response.code = 9;
                 status = 422;
 
                 res.status(status).send(response);
@@ -445,19 +445,19 @@ exports.updateUser = function(req, res) {
             {
                 if(user.oldPassword === undefined)
                 {
-                    response.error = "Need old password!";
+                    response.code = "Need old password!";
                     invalid = true;
                 }
                 else if(!bcrypt.compareSync(user.oldPassword, oldUser.password))
                 {
-                    response.error = "Old password incorrect!";
+                    response.code = "Old password incorrect!";
                     invalid = true;
                 }
                 else
                 {
                     if(user.newPassword === undefined || user.newPassword == "")
                     {
-                        response.error = "Need a new password!";
+                        response.code = "Need a new password!";
                         invalid = true;
                     }
                     else

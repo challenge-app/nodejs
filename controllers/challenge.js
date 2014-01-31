@@ -50,38 +50,38 @@ exports.newChallenge = function(req, res) {
 
                 if(user == null)
                 {
-                    response.error = "Please sign in!";
+                    response.code = 10;
                     status = 401;
                     callback(true);
                 }
                 else if(data.receiverId === undefined)
                 {
-                    response.error = "Give me an receiverId!";
+                    response.code = 4;
                     status = 400;
                     callback(true);
                 }
                 else if(data.description === undefined)
                 {
-                    response.error = "Give me a description!";
+                    response.code = 5;
                     status = 400;
                     callback(true);
                 }
                 else if(data.type === undefined)
                 {
-                    response.error = "Give me a type!";
+                    response.code = 6;
                     status = 400;
                     callback(true);
                 }
                 else if(data.type != "video"
                      && data.type != "picture")
                 {
-                    response.error = "I accept only 'video' and 'picture' as a type!";
+                    response.code = 15;
                     status = 422;
                     callback(true);
                 }
                 else if(data.receiverId == user._id)
                 {
-                    response.error = "You cannot challenge yourself!";
+                    response.code = 22;
                     status = 422;
                     callback(true);
                 }
@@ -99,13 +99,13 @@ exports.newChallenge = function(req, res) {
 
                 if(challenged == null)
                 {
-                    response.error = "User not found!";
+                    response.code = 11;
                     status = 422;
                     callback(true);
                 }
                 else if(!user.hasFriend(challenged._id))
                 {
-                    response.error = "You need to be his friend!";
+                    response.code = 23;
                     status = 422;
                     callback(true);
                 }
@@ -195,7 +195,7 @@ exports.challengesReceived = function(req, res) {
 
                 if(user == null)
                 {
-                    response.error = "Please sign in!";
+                    response.code = 10;
                     callback(true);
                     status = 401;
                 }
@@ -254,7 +254,7 @@ exports.challengesSent = function(req, res) {
 
                 if(user == null)
                 {
-                    response.error = "Please sign in!";
+                    response.code = 10;
                     callback(true);
                     status = 401;
                 }
@@ -317,13 +317,13 @@ exports.likeChallenge = function(req, res)
 
                 if(user == null)
                 {
-                    response.error = "Please sign in!";
+                    response.code = 10;
                     status = 401;
                     callback(true);
                 }
                 else if(data.challengeId === undefined)
                 {
-                    response.error = "Give me a challengeId!";
+                    response.code = 7;
                     status = 400;
                     callback(true);
                 }
@@ -344,7 +344,7 @@ exports.likeChallenge = function(req, res)
                 if(challenge == null
                 || challenge === undefined)
                 {
-                    response.error = "Challenge not found!";
+                    response.code = 16;
                     status = 422;
                     callback(true);
                 }
@@ -388,7 +388,7 @@ exports.likeChallenge = function(req, res)
             {
                 if(likeDoubt.liked)
                 {
-                    response.error = "Already liked!";
+                    response.code = 18;
                     status = 422;
                     error = true;
                 }
@@ -403,7 +403,7 @@ exports.likeChallenge = function(req, res)
             {
                 if(likeDoubt.doubted)
                 {
-                    response.error = "Already doubted!";
+                    response.code = 19;
                     status = 422;
                     error = true;
                 }
@@ -417,7 +417,7 @@ exports.likeChallenge = function(req, res)
             
             if(challenge.status == 2)
             {
-                response.error = "Challenge is refused!";
+                response.code = 17;
                 status = 422;
                 callback(true);
             }
@@ -489,19 +489,19 @@ exports.acceptChallenge = function(req, res)
 
                 if(user == null)
                 {
-                    response.error = "Please sign in!";
+                    response.code = 10;
                     status = 401;
                     callback(true);
                 }
                 else if(data.challengeId === undefined)
                 {
-                    response.error = "Give me a challengeId!";
+                    response.code = 7;
                     status = 400;
                     callback(true);
                 }
                 else if(data.url === undefined)
                 {
-                    response.error = "Give me an url!";
+                    response.code = 8;
                     status = 400;
                     callback(true);
                 }
@@ -522,7 +522,7 @@ exports.acceptChallenge = function(req, res)
                 if(challenge == null
                 || challenge === undefined)
                 {
-                    response.error = "Challenge not found!";
+                    response.code = 16;
                     status = 422;
                     callback(true);
                 }
@@ -536,13 +536,13 @@ exports.acceptChallenge = function(req, res)
         {
             if(challenge.receiver != user._id)
             {
-                response.error = "This challenge does not belong to you!";
+                response.code = 20;
                 status = 422;
                 callback(true);
             }
             else if(challenge.status > 0)
             {
-                response.error = "This challenge is finalized!";
+                response.code = 21;
                 status = 422;
                 callback(true);
             }
@@ -614,13 +614,13 @@ exports.refuseChallenge = function(req, res)
 
                 if(user == null)
                 {
-                    response.error = "Please sign in!";
+                    response.code = 10;
                     status = 401;
                     callback(true);
                 }
                 else if(data.challengeId === undefined)
                 {
-                    response.error = "Give me a challengeId!";
+                    response.code = 7;
                     status = 400;
                     callback(true);
                 }
@@ -641,7 +641,7 @@ exports.refuseChallenge = function(req, res)
                 if(challenge == null
                 || challenge === undefined)
                 {
-                    response.error = "Challenge not found!";
+                    response.code = 16;
                     status = 422;
                     callback(true);
                 }
@@ -655,13 +655,13 @@ exports.refuseChallenge = function(req, res)
         {
             if(challenge.receiver != user._id)
             {
-                response.error = "This challenge does not belong to you!";
+                response.code = 20;
                 status = 422;
                 callback(true);
             }
             else if(challenge.status > 0)
             {
-                response.error = "This challenge is finalized!";
+                response.code = 21;
                 status = 422;
                 callback(true);
             }

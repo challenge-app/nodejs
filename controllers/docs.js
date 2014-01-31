@@ -1,6 +1,8 @@
 var jade = require('jade');
 
-var data = require('../docs/all.js');
+var controllers = require('../docs/controllers.js'),
+		models 			= require('../docs/models.js'),
+		errors			= require('../docs/errors.js');
 
 /*
  * RENDER THE DOCS
@@ -8,8 +10,9 @@ var data = require('../docs/all.js');
 exports.showDocs = function(req, res) {
 	res.render('docs2',
   	{
-  		controllers : data.getControllers(),
-  		models : data.getModels(),
+  		controllers : controllers.getControllers(),
+  		models : models.getModels(),
+  		errors : errors.getErrors(),
   	}
   )
 };
