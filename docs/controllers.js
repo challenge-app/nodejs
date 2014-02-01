@@ -273,7 +273,7 @@ controllers.push({
 				["receiverId", "description"],
 				["receiverId", "description", "type"],
 				["receiverId", "description", "type", "reward *"],
-				["receiverId", "description", "type", "reward *"],
+				["receiverId", "description", "type", "reward *", "baseId *"],
 			],
 			headers: [
 				[],
@@ -293,7 +293,7 @@ controllers.push({
 				[422, "error", "{ code : 15 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
 			],
-			description: "Will try to create a new <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>.</p>",
+			description: "Will try to create a new <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>. <br/><em><strong>OBS: If you pass <code>baseId</code>, you don't need to pass <code>description</code>!</strong></em></p>",
 			example: [
 				'[POST] URL /challenge',
 				'PARAMETERS { receiverId : "52cc9cd3515sab4d1554de49", description : "I dare you to drink water upside down!", reward : 50 }',

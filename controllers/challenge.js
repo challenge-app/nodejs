@@ -143,8 +143,7 @@ exports.newChallenge = function(req, res) {
                     status = 401;
                     callback(true);
                 }
-                else if(data.receiverId === undefined
-                     && data.baseId === undefined)
+                else if(data.receiverId === undefined)
                 {
                     response.code = 4;
                     status = 400;
@@ -157,16 +156,14 @@ exports.newChallenge = function(req, res) {
                     status = 400;
                     callback(true);
                 }
-                else if(data.type === undefined
-                     && data.baseId === undefined)
+                else if(data.type === undefined)
                 {
                     response.code = 6;
                     status = 400;
                     callback(true);
                 }
                 else if(data.type != "video"
-                     && data.type != "picture"
-                     && data.baseId === undefined)
+                     && data.type != "picture")
                 {
                     response.code = 15;
                     status = 422;
