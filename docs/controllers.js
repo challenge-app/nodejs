@@ -326,6 +326,55 @@ controllers.push({
 			]
 		},
 		{
+			routeName: "/random",
+			method: "GET",
+			params: [
+				[],
+				[],
+			],
+			headers: [
+				[],
+				["X-AUTH-TOKEN"],
+			],
+			returns: [
+				[401, "error", "{ code : 10 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"challengebase-model\">ChallengeBase []</a>"]
+			],
+			description: "Will try to get three random <a href=\"#\" data-trigger=\"challengebase-model\">ChallengeBases</a> (easy, medium, hard).</p>",
+			example: [
+				'[GET] URL /challenge/random',
+				'PARAMETERS ',
+				'HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
+				'STATUS 200 OK',
+				[
+				    {
+				        "description": "Desafio 1",
+				        "generalLikes": 0,
+				        "def": true,
+				        "difficulty": 0,
+				        "timestamp": "1391216811599",
+				        "_id": "52ec490dddcef68f6263fd54"
+				    },
+				    {
+				        "description": "Desafio 2",
+				        "generalLikes": 0,
+				        "def": true,
+				        "difficulty": 1,
+				        "timestamp": "1391216811599",
+				        "_id": "52ec490dddcef68f6263fd54"
+				    },
+				    {
+				        "description": "Desafio 3",
+				        "generalLikes": 0,
+				        "def": true,
+				        "difficulty": 2,
+				        "timestamp": "1391216811599",
+				        "_id": "52ec490dddcef68f6263fd54"
+				    }
+				]
+			]
+		},
+		{
 			routeName: "/received",
 			method: "GET",
 			params: [

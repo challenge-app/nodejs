@@ -33,6 +33,9 @@ models.push({
 		["description", "String", "Description of the challenge."],
 		["generalLikes", "Number", "All thumbs up."],
 		["challenges", "Challenge", "Array of challenges."],
+		["generalDoubts", "Number", "All doubts."],
+		["* def", "Boolean", "If is created by us (founders)."],
+		["* difficulty", "Number", "(only if def is true) 0: easy, 1: medium, 2: hard."],
 		["timestamp", "String", "Last edit timestamp."]
 	],
 	example: [
@@ -60,7 +63,10 @@ models.push({
 					"timestamp": "1390980083413",
 					"_id": "52e8abf53d7dd12f76eeb1a8"
 				}
-			]
+			],
+			"generalDoubts" : 1,
+			"def" : false,
+			"difficulty" : 0
 		}
 	]
 });

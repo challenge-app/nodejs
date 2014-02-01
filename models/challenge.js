@@ -5,7 +5,9 @@ var challengeBaseSchema = mongoose.Schema({
     description: String,
     generalLikes: Number,
   	challenges: [{ type: Schema.Types.ObjectId, ref: 'Challenge' }],
-  	doubt: Number,
+  	generalDoubts: Number,
+  	def: Boolean,
+  	difficulty: Number, //0: facil, 1: medio, 2: dificil
   	timestamp: String
 });
 

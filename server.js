@@ -84,6 +84,7 @@ app.post('/user', user.addUser);
  */
 app.get('/challenge/received', challenge.challengesReceived);
 app.get('/challenge/sent', challenge.challengesSent);
+app.get('/challenge/random', challenge.randomChallenges);
  
 /*
  * CHALLENGE POST ROUTES

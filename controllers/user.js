@@ -1,10 +1,10 @@
 /*
  * EXTENSIONS
  */
-var bcrypt      = require('bcrypt'),
-    async       = require('async'),
-    auth        = require('../config/auth'),
-    userModel   = require('../models/user');
+var bcrypt 		= require('bcrypt'),
+	async 		= require('async'),
+	auth 		= require('../config/auth'),
+	userModel 	= require('../models/user');
 
 /*
  * MODELS
@@ -20,72 +20,101 @@ var User = userModel.getUserModel();
  */
 exports.addFriend = function(req, res) {
 
-    var data = req.body;
+	var data = req.body;
 
-    var response = {};
-    var invalid = false;
-    var status = 400;
+	var response = {};
+	var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.code = 10;
-            invalid = true;
-            status = 401;
-        }
-        else if(data._id === undefined)
-        {
-            response.code = 3;
-            invalid = true;
-            status = 400;
-        }
+	var user,
+	friendUser;
 
-        if(invalid)
-        {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            User.findOne({ _id : data._id }).exec(function(err, friendUser)
-            {
-                if(friendUser === null)
-                {
-                    response.code = 11;
+	async.series([
 
-                    res.status(422).send(response);
-                    console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-                }
-                else
-                {
-		    if(user.friends.indexOf(data._id) != -1)
-		    {
-			response.code = 14;
-			
-			res.status(422).send(response);
-		    }
-		    else
-		    {
-                    user.friends.push(friendUser);
+		function(callback)
+		{
+			auth.isAuthenticated(req, function(reqData)
+			{
+				user = reqData;
 
-                    user.save(function(err, user)
-                    {
-                        friendUser.friends.push(user);
+				if(user == null)
+				{
+					response.code = 10;
+					status = 401;
+					callback(true);
+				}
+				else if(data._id === undefined)
+				{
+					response.code = 3;
+					status = 400;
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			User.findOne({ _id : data._id }).exec(function(err, reqData)
+			{
+				friendUser = reqData;
 
-                        friendUser.save(function(err, ignore)
-                        {
-                            user.populate({ path: 'friends', select: '-friends' }, function(err, user)
-                            {
-                                res.send(user);
-                            });
-                        });
-                    });
-			    }
+				if(friendUser == null
+				|| friendUser === undefined)
+				{
+					response.code = 11;
+					status = 422;
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			if(user.friends.indexOf(data._id) != -1)
+			{
+				response.code = 14;
+				status = 422
+				callback(true);
+			}
+			else
+			{
+				user.friends.push(friendUser);
+
+				user.save(function(err, reqData)
+				{
+					user = reqData;
+
+					friendUser.friends.push(user);
+
+					callback();
+				});
+			}
+		},
+		function(callback)
+		{
+			friendUser.save(function(err, reqData)
+			{
+				user.populate('friends', '-friends', function(err, reqData)
+				{
+					user = reqData;
+
+					callback();
+				});
+			});
 		}
-            });
-        }
-    });
+
+	], function(invalid)
+	{
+		if(!invalid)
+			response = user;
+
+		res.status(status).send(response);
+	});
 
 }
 
@@ -97,34 +126,43 @@ exports.addFriend = function(req, res) {
  */
 exports.getFriends = function(req, res) {
 	
-    var response = {};
-    var invalid = false;
-    var status = 400;
+	var response = {};
+	var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.code = 10;
-            status = 401
-            invalid = true;
-        }
+	var user;
 
-        if(invalid)
-        {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            user.populate('friends','-friends -authenticationToken', function(err, user)
-            {
-                user.noToken();
-                res.send(user);
-            });
-        }
+	async.series([
 
-    });
+		function(callback)
+		{
+			auth.isAuthenticated(req, function(reqData)
+			{
+				user = reqData;
+
+				if(user == null)
+				{
+					response.code = 10;
+					status = 401
+					callback(true);
+				}
+
+				user.populate('friends','-friends -authenticationToken', function(err, reqData)
+				{
+					user = reqData;
+
+					callback();
+				});
+
+			});
+		},
+
+	], function(invalid)
+	{
+		if(!invalid)
+			response = user;
+
+		res.status(status).send(response);
+	});
 
 }
 
@@ -137,63 +175,90 @@ exports.getFriends = function(req, res) {
  */
 exports.auth = function(req, res) {
 
-    var user = req.body;
+	var data = req.body;
 
-    if(user.email === undefined)
-    {
-        var response = {};
+	var response = {};
+	var status = 200;
 
-        response.code = 1;
+	var user;
 
-        res.status(400).send(response);
-    }
+	async.series([
+		function(callback)
+		{
+			if(data.email === undefined)
+			{
+				response.code = 1;
+				status = 400;
+				callback(true);
+			}
+			else if(data.password === undefined)
+			{
+				response.code = 2;
+				status = 400;
+				callback(true);
+			}
+			else
+			{
+				callback();
+			}
+		},
+		function(callback)
+		{
+			User.findOne({ email : data.email }).exec(function(err, reqData)
+			{
+				user = reqData;
 
-    User.findOne({ email : user.email }).exec(function(err, item)
-    {
+				if(user == null
+				|| user === undefined)
+				{
+					response.code = 11;
+					status = 422;
+					callback(true);
+				}
+				else if(!bcrypt.compareSync(data.password, user.password))
+				{
+					response.code = 12;
+					status = 422;
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			var timestamp = (new Date().getTime()).toString();
 
-        var response = {};
-        var invalid = false;
-        var status = 400;
+			user.authenticationToken = bcrypt.hashSync(timestamp+user.email,12);
 
-        if(item === null)
-        {
-            response.code = 11;
-            status = 422;
-            invalid = true;
-        }
-        else if(user.password === undefined)
-        {
-            response.code = 2;
-            invalid = true;
-        }
-        else if(!bcrypt.compareSync(user.password, item.password))
-        {
-            response.code = 12;
-            invalid = true;
-        }
+			user.save(function(err, reqData)
+			{
+				user = reqData;
 
-        if(invalid)
-        {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            var timestamp = (new Date().getTime()).toString();
+				user.populate('friends', '-authenticationToken -__v -password -friends',
+					function(err, retData)
+					{
+						user = reqData;
 
-            item.authenticationToken = bcrypt.hashSync(timestamp+item.email,12);
+						user = user.toObject();
 
-            item.save(function(err, item)
-            {
-                var respItem = {};
-		respItem._id = item._id;
-		respItem.authenticationToken = item.authenticationToken;
-		respItem.email = item.email;
-		res.send(respItem);
-            });
-        }
+						delete user.password;
+						delete user.__v;
 
-    });
+						callback();
+					}
+				);
+			});
+		}
+	], function(invalid)
+	{
+		if(!invalid)
+			response = user;
+
+		res.status(status).send(response);
+	});
 
 }
 
@@ -202,29 +267,43 @@ exports.auth = function(req, res) {
  */
 exports.unAuth = function(req, res) {
 
-    var response = {};
-    var alreadyOut = false;
+	var response = {};
+	var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.message = 13;
-            res.status(200).send(response);
-        }
-        else
-        {
-            var timestamp = (new Date().getTime()).toString();
+	var user;
 
-            user.authenticationToken = bcrypt.hashSync(timestamp+user.email,12);
+	async.series([
+		function(callback)
+		{
+			auth.isAuthenticated(req, function(reqData)
+			{
+				user = reqData;
 
-            user.save(function(err, user)
-            {
-                response.message = 13;
-                res.status(200).send(response);
-            });
-        }
-    });
+				if(user == null)
+				{
+					response.code = 13;
+				}
+				
+				callback();
+			});
+		},
+		function(callback)
+		{
+			var timestamp = (new Date().getTime()).toString();
+
+			user.authenticationToken = bcrypt.hashSync(timestamp+user.email,12);
+
+			user.save(function(err, user)
+			{
+				response.code = 13;
+
+				callback();
+			});
+		}
+	], function()
+	{
+		res.status(status).send(response);
+	});
 }
 
 /*
@@ -235,20 +314,23 @@ exports.unAuth = function(req, res) {
  */
 exports.findMe = function(req, res) {
 
-    var response = {};
+	var response = {};
+	var status = 200;
 
-    auth.isAuthenticated(req, function(user)
-    {
-        if(user == null)
-        {
-            response.code = 10;
-            res.status(401).send(response);
-        }
-        else
-        {
-            res.send(user.noToken());
-        }
-    });
+	auth.isAuthenticated(req, function(user)
+	{
+		if(user == null)
+		{
+			response.code = 10;
+			status = 401;
+		}
+		else
+		{
+			response = user;
+		}
+
+		res.status(status).send(response);
+	});
    
 };
 
@@ -294,7 +376,7 @@ exports.find = function(req, res) {
     if(data.email === undefined)
     {
         response.code = 1;
-        invalid = true;
+        callback(true);
     }
 
     if(invalid)
@@ -355,12 +437,12 @@ exports.addUser = function(req, res) {
     if(user.email === undefined)
     {
         response.code = 1;
-        invalid = true;
+        callback(true);
     }
     else if(user.password === undefined)
     {
         response.code = 2;
-        invalid = true;
+        callback(true);
     }
 
     User.findOne({ email : user.email }).exec(function(err, check)
@@ -446,19 +528,19 @@ exports.updateUser = function(req, res) {
                 if(user.oldPassword === undefined)
                 {
                     response.code = "Need old password!";
-                    invalid = true;
+                    callback(true);
                 }
                 else if(!bcrypt.compareSync(user.oldPassword, oldUser.password))
                 {
                     response.code = "Old password incorrect!";
-                    invalid = true;
+                    callback(true);
                 }
                 else
                 {
                     if(user.newPassword === undefined || user.newPassword == "")
                     {
                         response.code = "Need a new password!";
-                        invalid = true;
+                        callback(true);
                     }
                     else
                     {

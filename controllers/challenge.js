@@ -26,6 +26,9 @@ var timestamp = (new Date().getTime()).toString();
  * @param String reward
  * @param String type
  * @param String description
+ * @param (opt) Boolean def
+ * @param (opt) Number difficulty
+ * @param (opt) String baseId
  * @return Mixed(Challenge + ChallengeBase) data
  */
 exports.newChallenge = function(req, res) {
@@ -54,26 +57,30 @@ exports.newChallenge = function(req, res) {
                     status = 401;
                     callback(true);
                 }
-                else if(data.receiverId === undefined)
+                else if(data.receiverId === undefined
+                     && data.baseId === undefined)
                 {
                     response.code = 4;
                     status = 400;
                     callback(true);
                 }
-                else if(data.description === undefined)
+                else if(data.description === undefined
+                     && data.baseId === undefined)
                 {
                     response.code = 5;
                     status = 400;
                     callback(true);
                 }
-                else if(data.type === undefined)
+                else if(data.type === undefined
+                     && data.baseId === undefined)
                 {
                     response.code = 6;
                     status = 400;
                     callback(true);
                 }
                 else if(data.type != "video"
-                     && data.type != "picture")
+                     && data.type != "picture"
+                     && data.baseId === undefined)
                 {
                     response.code = 15;
                     status = 422;
@@ -117,18 +124,56 @@ exports.newChallenge = function(req, res) {
         },
         function(callback)
         {
-            challBase = new ChallengeBase({
-                description : data.description,
-                generalLikes : 0,
-                timestamp : timestamp
-            });
-
-            challBase.save(function(err, retData)
+            if(data.baseId !== undefined)
             {
-                challBase = retData;
+                ChallengeBase.findOne({ _id : data.baseId }, function(err, retData)
+                {
+                    challBase = retData;
 
-                callback();
-            });
+                    if(challBase == null
+                    || challBase === undefined)
+                    {
+                        response.code = 16;
+                        status = 422;
+                        callback(true);
+                    }
+                    else
+                    {
+                        callback();
+                    }
+                });
+            }
+            else
+            {
+                var def = false,
+                    difficulty = 0;
+
+                if(data.def !== undefined)
+                {
+                    def = data.def;
+                }
+
+                if(data.difficulty !== undefined)
+                {
+                    difficulty = data.difficulty;
+                }
+
+                challBase = new ChallengeBase({
+                    description : data.description,
+                    generalLikes : 0,
+                    generalDoubts : 0,
+                    def : def,
+                    difficulty : difficulty,
+                    timestamp : timestamp
+                });
+
+                challBase.save(function(err, retData)
+                {
+                    challBase = retData;
+
+                    callback();
+                });
+            }
         },
         function(callback)
         {
@@ -168,6 +213,81 @@ exports.newChallenge = function(req, res) {
             response = chall;
 
         res.status(status).send(response);
+    });
+}
+
+/*
+ * [GET] RANDOM CHALLENGES
+ * (need to be authed) 
+ *
+ * @return Mixed(Challenge + ChallengeBase) data
+ */
+exports.randomChallenges = function(req, res) {
+
+    var response = {};
+    var status = 200;
+
+    var user;
+
+    auth.isAuthenticated(req, function(retData)
+    {
+        user = retData;
+
+        if(user == null)
+        {
+            response.code = 10;
+            status = 401;
+            res.status(status).send(response);
+        }
+        else
+        {
+            async.parallel(
+            [
+                function(callback)
+                {
+                    ChallengeBase
+                    .find({
+                        def : true,
+                        difficulty : 0
+                    }, '-challenges')
+                    .limit(1)
+                    .exec(function(err, result)
+                    {
+                        callback(null, result[0]);
+                    });
+                },
+                function(callback)
+                {
+                    ChallengeBase
+                    .find({
+                        def : true,
+                        difficulty : 1
+                    }, '-challenges')
+                    .limit(1)
+                    .exec(function(err, result)
+                    {
+                        callback(null, result[0]);
+                    });
+                },
+                function(callback)
+                {
+                    ChallengeBase
+                    .find({
+                        def : true,
+                        difficulty : 2
+                    }, '-challenges')
+                    .limit(1)
+                    .exec(function(err, result)
+                    {
+                        callback(null, result[0]);
+                    });
+                }
+            ],
+            function(err, results)
+            {
+                res.status(status).send(results);
+            });
+        }
     });
 }
 
