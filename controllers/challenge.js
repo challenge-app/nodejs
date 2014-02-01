@@ -19,6 +19,92 @@ var User            = userModel.getUserModel(),
 var timestamp = (new Date().getTime()).toString();
 
 /*
+ * [POST] CREATE A CHALLENGEBASE
+ * (need to be authed) 
+ *
+ * @param String description
+ * @param (opt) Boolean def
+ * @param (opt) Number difficulty
+ * @param (opt) String baseId
+ * @return ChallengeBase data
+ */
+exports.newChallengeBase = function(req, res) {
+
+    var data = req.body;
+
+    var response = {};
+    var status = 200;
+
+    var user,
+        challBase;
+
+    async.series([
+
+        function(callback)
+        {
+            auth.isAuthenticated(req, function(retData)
+            {
+                user = retData;
+
+                if(user == null)
+                {
+                    response.code = 10;
+                    status = 401;
+                    callback(true);
+                }
+                else if(data.description === undefined)
+                {
+                    response.code = 5;
+                    status = 400;
+                    callback(true);
+                }
+                else
+                {
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
+            var def = false,
+                difficulty = 0;
+
+            if(data.def !== undefined)
+            {
+                def = data.def;
+            }
+
+            if(data.difficulty !== undefined)
+            {
+                difficulty = data.difficulty;
+            }
+
+            challBase = new ChallengeBase({
+                description : data.description,
+                generalLikes : 0,
+                generalDoubts : 0,
+                def : def,
+                difficulty : difficulty,
+                timestamp : timestamp
+            });
+
+            challBase.save(function(err, retData)
+            {
+                challBase = retData;
+
+                callback();
+            });
+        }
+    ], function(invalid)
+    {
+        if(!invalid)
+            response = challBase;
+
+        res.status(status).send(response);
+    });
+}
+
+/*
  * [POST] CREATE A CHALLENGE
  * (need to be authed) 
  *

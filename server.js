@@ -90,6 +90,7 @@ app.get('/challenge/random', challenge.randomChallenges);
  * CHALLENGE POST ROUTES
  */
 app.post('/challenge', challenge.newChallenge);
+app.post('/challenge/base', challenge.newChallengeBase);
 app.post('/challenge/like', challenge.likeChallenge);
 app.post('/challenge/accept', challenge.acceptChallenge);
 app.post('/challenge/refuse', challenge.refuseChallenge);
