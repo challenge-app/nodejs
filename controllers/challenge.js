@@ -336,10 +336,11 @@ exports.randomChallenges = function(req, res) {
                         def : true,
                         difficulty : 0
                     }, '-challenges')
-                    .limit(1)
                     .exec(function(err, result)
                     {
-                        callback(null, result[0]);
+                        var rand = Math.floor(Math.random() * result.length);
+
+                        callback(null, result[rand]);
                     });
                 },
                 function(callback)
@@ -349,10 +350,11 @@ exports.randomChallenges = function(req, res) {
                         def : true,
                         difficulty : 1
                     }, '-challenges')
-                    .limit(1)
                     .exec(function(err, result)
                     {
-                        callback(null, result[0]);
+                        var rand = Math.floor(Math.random() * result.length);
+
+                        callback(null, result[rand]);
                     });
                 },
                 function(callback)
@@ -362,10 +364,11 @@ exports.randomChallenges = function(req, res) {
                         def : true,
                         difficulty : 2
                     }, '-challenges')
-                    .limit(1)
                     .exec(function(err, result)
                     {
-                        callback(null, result[0]);
+                        var rand = Math.floor(Math.random() * result.length);
+
+                        callback(null, result[rand]);
                     });
                 }
             ],
