@@ -22,7 +22,7 @@ exports.addEmail = function(req, res) {
 	var data = req.body;
 
 	var response = {};
-	var status = 200;
+	var status = 200; //200
 
 	var newsletter;
 
@@ -33,7 +33,7 @@ exports.addEmail = function(req, res) {
 			if(data.email === undefined)
 			{
 				response.error = "Give me an email!";
-				status = 400;
+				status = 200; //400
 				callback(true);
 			}
 			else
