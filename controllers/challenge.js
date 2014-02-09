@@ -33,7 +33,7 @@ exports.newChallengeBase = function(req, res) {
     var data = req.body;
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challBase;
@@ -49,13 +49,13 @@ exports.newChallengeBase = function(req, res) {
                 if(user == null)
                 {
                     response.code = 10;
-                    status = 401;
+                    status = 200; //401
                     callback(true);
                 }
                 else if(data.description === undefined)
                 {
                     response.code = 5;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else
@@ -122,7 +122,7 @@ exports.newChallenge = function(req, res) {
     var data = req.body;
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challenged,
@@ -140,39 +140,39 @@ exports.newChallenge = function(req, res) {
                 if(user == null)
                 {
                     response.code = 10;
-                    status = 401;
+                    status = 200; //401
                     callback(true);
                 }
                 else if(data.receiverId === undefined)
                 {
                     response.code = 4;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else if(data.description === undefined
                      && data.baseId === undefined)
                 {
                     response.code = 5;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else if(data.type === undefined)
                 {
                     response.code = 6;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else if(data.type != "video"
                      && data.type != "picture")
                 {
                     response.code = 15;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else if(data.receiverId == user._id)
                 {
                     response.code = 22;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else
@@ -190,13 +190,13 @@ exports.newChallenge = function(req, res) {
                 if(challenged == null)
                 {
                     response.code = 11;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else if(!user.hasFriend(challenged._id))
                 {
                     response.code = 23;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else
@@ -217,7 +217,7 @@ exports.newChallenge = function(req, res) {
                     || challBase === undefined)
                     {
                         response.code = 16;
-                        status = 422;
+                        status = 200; //422
                         callback(true);
                     }
                     else
@@ -308,7 +308,7 @@ exports.newChallenge = function(req, res) {
 exports.randomChallenges = function(req, res) {
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user;
 
@@ -319,7 +319,7 @@ exports.randomChallenges = function(req, res) {
         if(user == null)
         {
             response.code = 10;
-            status = 401;
+            status = 200; //401
             res.status(status).send(response);
         }
         else
@@ -386,7 +386,7 @@ exports.randomChallenges = function(req, res) {
 exports.challengesReceived = function(req, res) {
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challenges;
@@ -403,7 +403,7 @@ exports.challengesReceived = function(req, res) {
                 {
                     response.code = 10;
                     callback(true);
-                    status = 401;
+                    status = 200; //401
                 }
                 else
                 {
@@ -445,7 +445,7 @@ exports.challengesReceived = function(req, res) {
 exports.challengesSent = function(req, res) {
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challenges;
@@ -462,7 +462,7 @@ exports.challengesSent = function(req, res) {
                 {
                     response.code = 10;
                     callback(true);
-                    status = 401;
+                    status = 200; //401
                 }
                 else
                 {
@@ -507,7 +507,7 @@ exports.likeChallenge = function(req, res)
     var data = req.body;
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challenge,
@@ -524,13 +524,13 @@ exports.likeChallenge = function(req, res)
                 if(user == null)
                 {
                     response.code = 10;
-                    status = 401;
+                    status = 200; //401
                     callback(true);
                 }
                 else if(data.challengeId === undefined)
                 {
                     response.code = 7;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else
@@ -551,7 +551,7 @@ exports.likeChallenge = function(req, res)
                 || challenge === undefined)
                 {
                     response.code = 16;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else
@@ -595,7 +595,7 @@ exports.likeChallenge = function(req, res)
                 if(likeDoubt.liked)
                 {
                     response.code = 18;
-                    status = 422;
+                    status = 200; //422
                     error = true;
                 }
                 else
@@ -610,7 +610,7 @@ exports.likeChallenge = function(req, res)
                 if(likeDoubt.doubted)
                 {
                     response.code = 19;
-                    status = 422;
+                    status = 200; //422
                     error = true;
                 }
                 else
@@ -624,7 +624,7 @@ exports.likeChallenge = function(req, res)
             if(challenge.status == 2)
             {
                 response.code = 17;
-                status = 422;
+                status = 200; //422
                 callback(true);
             }
             else if(!error)
@@ -680,7 +680,7 @@ exports.acceptChallenge = function(req, res)
     var data = req.body;
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challenge;
@@ -696,19 +696,19 @@ exports.acceptChallenge = function(req, res)
                 if(user == null)
                 {
                     response.code = 10;
-                    status = 401;
+                    status = 200; //401
                     callback(true);
                 }
                 else if(data.challengeId === undefined)
                 {
                     response.code = 7;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else if(data.url === undefined)
                 {
                     response.code = 8;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else
@@ -729,7 +729,7 @@ exports.acceptChallenge = function(req, res)
                 || challenge === undefined)
                 {
                     response.code = 16;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else
@@ -743,13 +743,13 @@ exports.acceptChallenge = function(req, res)
             if(challenge.receiver != user._id)
             {
                 response.code = 20;
-                status = 422;
+                status = 200; //422
                 callback(true);
             }
             else if(challenge.status > 0)
             {
                 response.code = 21;
-                status = 422;
+                status = 200; //422
                 callback(true);
             }
             else
@@ -760,7 +760,7 @@ exports.acceptChallenge = function(req, res)
         function(callback)
         { 
             challenge.url = data.url;
-            challenge.status = 1;
+            challenge.status = 200; //1
             challenge.timestamp = timestamp;
 
             challenge.save(function(err, retData)
@@ -805,7 +805,7 @@ exports.refuseChallenge = function(req, res)
     var data = req.body;
 
     var response = {};
-    var status = 200;
+    var status = 200; //200
 
     var user,
         challenge;
@@ -821,13 +821,13 @@ exports.refuseChallenge = function(req, res)
                 if(user == null)
                 {
                     response.code = 10;
-                    status = 401;
+                    status = 200; //401
                     callback(true);
                 }
                 else if(data.challengeId === undefined)
                 {
                     response.code = 7;
-                    status = 400;
+                    status = 200; //400
                     callback(true);
                 }
                 else
@@ -848,7 +848,7 @@ exports.refuseChallenge = function(req, res)
                 || challenge === undefined)
                 {
                     response.code = 16;
-                    status = 422;
+                    status = 200; //422
                     callback(true);
                 }
                 else
@@ -862,13 +862,13 @@ exports.refuseChallenge = function(req, res)
             if(challenge.receiver != user._id)
             {
                 response.code = 20;
-                status = 422;
+                status = 200; //422
                 callback(true);
             }
             else if(challenge.status > 0)
             {
                 response.code = 21;
-                status = 422;
+                status = 200; //422
                 callback(true);
             }
             else
@@ -878,7 +878,7 @@ exports.refuseChallenge = function(req, res)
         },
         function(callback)
         { 
-            challenge.status = 2;
+            challenge.status = 200; //2
             challenge.timestamp = timestamp;
 
             challenge.save(function(err, retData)

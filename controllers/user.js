@@ -23,7 +23,7 @@ exports.addFriend = function(req, res) {
 	var data = req.body;
 
 	var response = {};
-	var status = 200;
+	var status = 200; //200
 
 	var user,
 	friendUser;
@@ -39,13 +39,13 @@ exports.addFriend = function(req, res) {
 				if(user == null)
 				{
 					response.code = 10;
-					status = 401;
+					status = 200; //401
 					callback(true);
 				}
 				else if(data._id === undefined)
 				{
 					response.code = 3;
-					status = 400;
+					status = 200; //400
 					callback(true);
 				}
 				else
@@ -64,7 +64,7 @@ exports.addFriend = function(req, res) {
 				|| friendUser === undefined)
 				{
 					response.code = 11;
-					status = 422;
+					status = 200; //422
 					callback(true);
 				}
 				else
@@ -127,7 +127,7 @@ exports.addFriend = function(req, res) {
 exports.getFriends = function(req, res) {
 	
 	var response = {};
-	var status = 200;
+	var status = 200; //200
 
 	var user;
 
@@ -179,7 +179,7 @@ exports.auth = function(req, res) {
 	var data = req.body;
 
 	var response = {};
-	var status = 200;
+	var status = 200; //200
 
 	var user;
 
@@ -189,13 +189,13 @@ exports.auth = function(req, res) {
 			if(data.email === undefined)
 			{
 				response.code = 1;
-				status = 400;
+				status = 200; //400
 				callback(true);
 			}
 			else if(data.password === undefined)
 			{
 				response.code = 2;
-				status = 400;
+				status = 200; //400
 				callback(true);
 			}
 			else
@@ -213,13 +213,13 @@ exports.auth = function(req, res) {
 				|| user === undefined)
 				{
 					response.code = 11;
-					status = 422;
+					status = 200; //422
 					callback(true);
 				}
 				else if(!bcrypt.compareSync(data.password, user.password))
 				{
 					response.code = 12;
-					status = 422;
+					status = 200; //422
 					callback(true);
 				}
 				else
@@ -269,7 +269,7 @@ exports.auth = function(req, res) {
 exports.unAuth = function(req, res) {
 
 	var response = {};
-	var status = 200;
+	var status = 200; //200
 
 	var user;
 
@@ -316,14 +316,14 @@ exports.unAuth = function(req, res) {
 exports.findMe = function(req, res) {
 
 	var response = {};
-	var status = 200;
+	var status = 200; //200
 
 	auth.isAuthenticated(req, function(user)
 	{
 		if(user == null)
 		{
 			response.code = 10;
-			status = 401;
+			status = 200; //401
 		}
 		else
 		{
@@ -472,7 +472,7 @@ exports.addUser = function(req, res) {
             else
             {
                 response.code = 9;
-                status = 422;
+                status = 200; //422
 
                 res.status(status).send(response);
                 console.log('Error: invalid request "'+JSON.stringify(response)+'"');
