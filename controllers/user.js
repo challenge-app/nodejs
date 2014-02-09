@@ -145,14 +145,15 @@ exports.getFriends = function(req, res) {
 					status = 401
 					callback(true);
 				}
-
-				user.populate('friends','-friends -authenticationToken', function(err, reqData)
+				else
 				{
-					user = reqData;
+					user.populate('friends','-friends -authenticationToken', function(err, reqData)
+					{
+						user = reqData;
 
-					callback();
-				});
-
+						callback();
+					});
+				}
 			});
 		},
 
