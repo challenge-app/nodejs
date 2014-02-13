@@ -97,29 +97,40 @@ controllers.push({
 			method: "POST",
 			params: [
 				[],
-				["email"],
-				["email"],
+				["query"],
 			],
 			headers: [
 				[],
 				[],
-				[],
 			],
 			returns: [
-				[400, "error", "{ code : 1 }"],
-				[422, "error", "{ code : 11 }"],
-				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
+				[400, "error", "{ code : 24 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">Users</a>"]
 			],
-			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> by his $email.</p>",
+			description: "Will try find <a href=\"#\" data-trigger=\"user-model\">Users</a> that matches the $query.</p>",
 			example: [
 				'[POST] URL /user/find',
-				'PARAMETERS { email : "abc@teste.com" }',
+				'PARAMETERS { query : "gmail" }',
 				'HEADERS',
 				'STATUS 200 OK',
-				{
-					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com"
-				}
+				[
+					{
+						"_id": "52e863d7fc1c741857d152f6",
+						"email": "mauricio@gmail.com",
+						"firstName": "Mauricio",
+						"lastName": "Giordano",
+						"username": "mgiordano",
+						"phone": "199999999"
+					},
+					{
+						"_id": "52e863d7fc1c741857d15212",
+						"email": "roberto@yahoo.com",
+						"firstName": "Roberto",
+						"lastName": "Aguiar",
+						"username": "ragmail",
+						"phone": "199999999"
+					}
+				]
 			]
 		},
 		{

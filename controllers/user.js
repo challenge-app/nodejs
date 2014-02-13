@@ -23,10 +23,11 @@ exports.addFriend = function(req, res) {
 	var data = req.body;
 
 	var response = {};
-	var status = 200; //200
+	var status = 200;
 
 	var user,
-	friendUser;
+	friendUser,
+	friends;
 
 	async.series([
 
@@ -39,13 +40,13 @@ exports.addFriend = function(req, res) {
 				if(user == null)
 				{
 					response.code = 10;
-					status = 200; //401
+					status = 401; //401
 					callback(true);
 				}
 				else if(data._id === undefined)
 				{
 					response.code = 3;
-					status = 200; //400
+					status = 400; //400
 					callback(true);
 				}
 				else
@@ -64,7 +65,7 @@ exports.addFriend = function(req, res) {
 				|| friendUser === undefined)
 				{
 					response.code = 11;
-					status = 200; //422
+					status = 422; //422
 					callback(true);
 				}
 				else
@@ -101,10 +102,87 @@ exports.addFriend = function(req, res) {
 			{
 				user.populate('friends', '-friends', function(err, reqData)
 				{
-					user = reqData;
+					friends = reqData.friends;
 
 					callback();
 				});
+			});
+		}
+
+	], function(invalid)
+	{
+		if(!invalid)
+			response = friends;
+
+		res.status(status).send(response);
+	});
+
+}
+
+/*
+ * [POST] EDIT THE USER
+ * (need to be authed) 
+ *
+ * @param JSON fields
+ * @return User data
+ */
+exports.edit = function(req, res) {
+
+	var data = req.body;
+
+	var response = {};
+	var status = 200;
+
+	var user;
+
+	async.series([
+
+		function(callback)
+		{
+			auth.isAuthenticated(req, function(reqData)
+			{
+				user = reqData;
+
+				if(user == null)
+				{
+					response.code = 10;
+					status = 401;
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			if(data.email !== undefined)
+			{
+				user.email = data.email;
+			}
+			if(data.username !== undefined)
+			{
+				user.username = data.username;
+			}
+			if(data.firstName !== undefined)
+			{
+				user.firstName = data.firstName;
+			}
+			if(data.lastName !== undefined)
+			{
+				user.lastName = data.lastName;
+			}
+			if(data.phone !== undefined)
+			{
+				user.phone = data.phone;
+			}
+		
+			user.save(function(err, reqData)
+			{
+				user = reqData;
+
+				callback();
 			});
 		}
 
@@ -129,7 +207,8 @@ exports.getFriends = function(req, res) {
 	var response = {};
 	var status = 200; //200
 
-	var user;
+	var user,
+		friends;
 
 	async.series([
 
@@ -147,20 +226,24 @@ exports.getFriends = function(req, res) {
 				}
 				else
 				{
-					user.populate('friends','-friends -authenticationToken', function(err, reqData)
-					{
-						user = reqData;
-
-						callback();
-					});
+					callback();
 				}
 			});
 		},
+		function(callback)
+		{
+			user.populate('friends','-friends -authenticationToken', function(err, reqData)
+			{
+				friends = reqData.friends;
+
+				callback();
+			});
+		}
 
 	], function(invalid)
 	{
 		if(!invalid)
-			response = user;
+			response = friends;
 
 		res.status(status).send(response);
 	});
@@ -189,13 +272,13 @@ exports.auth = function(req, res) {
 			if(data.email === undefined)
 			{
 				response.code = 1;
-				status = 200; //400
+				status = 400; //400
 				callback(true);
 			}
 			else if(data.password === undefined)
 			{
 				response.code = 2;
-				status = 200; //400
+				status = 400; //400
 				callback(true);
 			}
 			else
@@ -213,13 +296,13 @@ exports.auth = function(req, res) {
 				|| user === undefined)
 				{
 					response.code = 11;
-					status = 200; //422
+					status = 422; //422
 					callback(true);
 				}
 				else if(!bcrypt.compareSync(data.password, user.password))
 				{
 					response.code = 12;
-					status = 200; //422
+					status = 422; //422
 					callback(true);
 				}
 				else
@@ -323,7 +406,7 @@ exports.findMe = function(req, res) {
 		if(user == null)
 		{
 			response.code = 10;
-			status = 200; //401
+			status = 401; //401
 		}
 		else
 		{
@@ -364,42 +447,67 @@ exports.findById = function(req, res) {
 /*
  * [POST] FIND A USER BY EMAIL
  *
- * @param String email
+ * @param String query
  * @return User data
  */
 exports.find = function(req, res) {
 
-    var data        = req.body,
-        invalid     = false,
-        response    = {},
-        status      = 400;
+	var data        = req.body,
+		response    = {},
+		status      = 400;
 
-    if(data.email === undefined)
-    {
-        response.code = 1;
-        callback(true);
-    }
+	var users;
 
-    if(invalid)
-    {
-        res.status(status).send(response);
-        console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-    }
-    else
-    {
-        User.find({ email : new RegExp(data.email, 'i') },'-friends -authenticationToken', function(err, user)
-        {
-            if(user == null)
-            {
-                response.code = 11;
-                res.status(422).send(response);
-            }
-            else
-            {
-                res.send(user);
-            }
-        });
-    }
+	async.series([
+		function(callback)
+		{
+			if(data.query === undefined)
+			{
+				response.code = 24; //Missing parameter 'query'
+				callback(true);
+			}
+			else
+			{
+				callback();
+			}
+		},
+		function(callback)
+		{
+			User
+			.find({ 
+				$or : [
+					{
+						email : new RegExp(data.query, 'i')
+					},
+					{
+						username : new RegExp(data.query, 'i')
+					},
+					{
+						firstName : new RegExp(data.query, 'i')
+					},
+					{
+						lastName : new RegExp(data.query, 'i')
+					},
+					{
+						phone : new RegExp(data.query, 'i')
+					}
+				]
+			})
+			.select('-friends -authenticationToken')
+			.exec(function(err, retData)
+			{
+				users = retData
+
+				callback();
+			});
+		}
+	], function(invalid)
+	{
+		if(!invalid)
+			response = users;
+
+		res.status(status).send(response);
+	});
 }
  
 /*
@@ -472,7 +580,7 @@ exports.addUser = function(req, res) {
             else
             {
                 response.code = 9;
-                status = 200; //422
+                status = 422; //422
 
                 res.status(status).send(response);
                 console.log('Error: invalid request "'+JSON.stringify(response)+'"');

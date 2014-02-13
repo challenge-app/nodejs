@@ -6,10 +6,11 @@ var express = require('express');
 /*
  * CONTROLLERS
  */
-var user 				= require('./controllers/user'),
+var user 		= require('./controllers/user'),
     challenge 	= require('./controllers/challenge'),
+    feed 	 	= require('./controllers/feed'),
     newsletter 	= require('./controllers/newsletter'),
-    docs 				= require('./controllers/docs');
+    docs 		= require('./controllers/docs');
 
 /*
  * CONFIG
@@ -19,7 +20,7 @@ var mongo = require('./config/mongodb');
 /*
  * DECLARE APP
  */
-var app 	= express();
+var app = express();
 
 /*
  * FOR RENDERING HTML
@@ -64,7 +65,7 @@ app.get('/', docs.showDocs);
 /*
  * USER GET ROUTES
  */
-app.get('/user', user.findAll);
+app.get('/user', user.findMe);
 app.get('/user/logout', user.unAuth);
 app.get('/user/friends', user.getFriends);
 app.get('/user/deleteAll', user.deleteAll);
@@ -77,6 +78,7 @@ app.get('/user/:id', user.findById);
 app.post('/user/friend', user.addFriend);
 app.post('/user/auth', user.auth);
 app.post('/user/find', user.find);
+app.post('/user/edit', user.edit);
 app.post('/user', user.addUser);
 
 /*
@@ -94,6 +96,11 @@ app.post('/challenge/base', challenge.newChallengeBase);
 app.post('/challenge/like', challenge.likeChallenge);
 app.post('/challenge/accept', challenge.acceptChallenge);
 app.post('/challenge/refuse', challenge.refuseChallenge);
+
+/*
+ * FEED GET ROUTES
+ */
+app.get('/feed', feed.getMyFeed);
 
 /*
  * NEWSLETTER POST ROUTES

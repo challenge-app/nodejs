@@ -8,19 +8,19 @@ models.push({
 		["email", "String", "User email."],
 		["password", "String", "User password."],
 		["authenticationToken", "String", "X-AUTH-TOKEN"],
-		["friends", "User", "Array of users."]
+		["firstName", "String", "His first name."],
+		["lastName", "String", "His last name."],
+		["username", "String", "His nickname."],
+		["phone", "String", "His phone number."]
 	],
 	example: [
 		{
-			"_id": "52e863d7fc1c741857d152f6",
-			"email": "a",
-			"authenticationToken": "$2a$12$yvxdiZlYhdy7KF.wwH.J9eaeJ/UytKfsqfZ4FPt4ryoFbQdA24kDe",
-			"friends": [
-				{
-					"_id": "52e863ecfc1c741857d152f7",
-					"email": "b"
-				}
-			]
+			"_id": "52fc555ffc8d61b906fff96a",
+			"email": "mcgiordalp@gmail.com",
+			"firstName": "Mauricio",
+			"lastName": "Giordano",
+			"phone": "19991425302",
+			"username": "mgiordano"
 		}
 	]
 })

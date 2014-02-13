@@ -6,14 +6,18 @@ var userSchema = mongoose.Schema({
     password: String,
     authenticationToken: String,
   	friends : [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  	picture : String,
-  	reputation : Number
+  	reputation : Number,
+  	username : String,
+  	firstName : String,
+  	lastName : String,
+  	phone : String
 })
 
 userSchema.set('toJSON', {
     transform: function(doc, ret, options) {
         delete ret.password;
         delete ret.__v;
+        delete ret.friends;
     }
 });
 

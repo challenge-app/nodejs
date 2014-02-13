@@ -12,8 +12,8 @@ var challengeBaseSchema = mongoose.Schema({
 });
 
 var challengeSchema = mongoose.Schema({
-		info: { type: String, ref: 'ChallengeBase' },
-		sender: { type: String, ref: 'User' },
+	info: { type: String, ref: 'ChallengeBase' },
+	sender: { type: String, ref: 'User' },
     receiver: { type: String, ref: 'User' },
     status: Number, //-1: Não viu, 0: Viu mas não aceitou, 1: Viu e aceitou, 2: Viu e recusou
     url: String, //URL DO VIDEO
