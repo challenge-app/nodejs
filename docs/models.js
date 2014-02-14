@@ -23,7 +23,7 @@ models.push({
 			"username": "mgiordano"
 		}
 	]
-})
+});
 
 models.push({
 	name: "challengebase",
@@ -132,6 +132,45 @@ models.push({
 			"challengeId": "22e8abf53d7dd12f76eeb109",
 			"userId": "82e8abf53d7dd12f76eeb1a1",
 			"_id": "52e8abf53d7dd12f76eeb1a8"
+		}
+	]
+});
+
+models.push({
+	name: "feed",
+	show: "Feed",
+	content: [
+		["_id", "String", "ID"],
+		["challenge", "Challenge", "The challenge of the current feed."],
+		["whatHappened", "Number", "0: Has been challenged; 1: Accepted a challenge; 2: Refused a challenge."]
+	],
+	example: [
+		{
+			"challenge" : {
+				"info": {
+					"description": "I dare you to walk with a horse mask!",
+					"generalLikes": 0,
+					"timestamp": "1390980083413",
+					"_id": "52e8abf53d7dd12f76eeb1a7"
+				},
+				"sender": {
+					"_id": "52e863d7fc1c741857d152f6",
+					"email": "a"
+				},
+				"receiver": {
+					"_id": "52e863ecfc1c741857d152f7",
+					"email": "b"
+				},
+				"status": -1,
+				"url": "http://youtube.com/ASfnNk=",
+				"type": "video",
+				"reward": 10,
+				"likes": 0,
+				"doubts": 1,
+				"timestamp": "1390980083413",
+				"_id": "52e8abf53d7dd12f76eeb1a8"
+			},
+			"whatHappened" : 0
 		}
 	]
 });

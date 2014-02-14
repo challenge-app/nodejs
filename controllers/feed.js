@@ -40,6 +40,9 @@ function myChallenges(user, callback)
             { receiver : { $in : user.friends } }
         ]
     })
+    .populate('info', '-challenges')
+    .populate('sender', '-friends')
+    .populate('receiver', '-friends')
     .sort('-timestamp')
     .exec(function(err, retData)
     {

@@ -671,6 +671,70 @@ controllers.push({
 	]
 });
 
+controllers.push({
+	name: "feed",
+	show: "Feed",
+	routes: [
+		{
+			routeName: "/",
+			method: "GET",
+			params: [
+				[],
+				[],
+				["limit"],
+				["limit", "offset"],
+			],
+			headers: [
+				[],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],			],
+			returns: [
+				[401, "error", "{ code : 10 }"],
+				[400, "error", "{ code : 25 }"],
+				[400, "error", "{ code : 26 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"feed-model\">Feed</a>"]
+			],
+			description: "Will try to recover the user's <a href=\"#\" data-trigger=\"feed-model\">Feed</a>.",
+			example: [
+				'[GET] URL /feed',
+				'PARAMETERS { limit : 1, offset : 0 }',
+				'HEADERS X-AUTH-TOKEN = $2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
+				'STATUS 200 OK',
+				[
+					{
+						"challenge" : {
+							"info": {
+								"description": "I dare you to walk with a horse mask!",
+								"generalLikes": 0,
+								"timestamp": "1390980083413",
+								"_id": "52e8abf53d7dd12f76eeb1a7"
+							},
+							"sender": {
+								"_id": "52e863d7fc1c741857d152f6",
+								"email": "a"
+							},
+							"receiver": {
+								"_id": "52e863ecfc1c741857d152f7",
+								"email": "b"
+							},
+							"status": -1,
+							"url": "http://youtube.com/ASfnNk=",
+							"type": "video",
+							"reward": 10,
+							"likes": 0,
+							"doubts": 1,
+							"timestamp": "1390980083413",
+							"_id": "52e8abf53d7dd12f76eeb1a8"
+						},
+						"whatHappened" : 0
+					}
+				]
+			]
+		},
+	]
+});
+
 exports.getControllers = function()
 {
 	return controllers;
