@@ -10,7 +10,8 @@ var userSchema = mongoose.Schema({
   	username : String,
   	firstName : String,
   	lastName : String,
-  	phone : String
+  	phone : String,
+    timestamp : String
 })
 
 userSchema.set('toJSON', {

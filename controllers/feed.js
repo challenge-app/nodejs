@@ -29,26 +29,6 @@ var timestamp = (new Date().getTime()).toString();
  * @return Feed[] data
  */
 
-function myChallenges(user, callback)
-{
-    Challenge
-    .find({
-        $or : [
-            { sender : user._id },
-            { receiver : user._id },
-            { sender : { $in : user.friends } },
-            { receiver : { $in : user.friends } }
-        ]
-    })
-    .populate('info', '-challenges')
-    .populate('sender', '-friends')
-    .populate('receiver', '-friends')
-    .sort('-timestamp')
-    .exec(function(err, retData)
-    {
-        callback(retData);
-    });
-}
 
 exports.getMyFeed = function(req, res) {
 
@@ -56,7 +36,7 @@ exports.getMyFeed = function(req, res) {
     var response = {};
     var status = 200; //200
 
-    var feed;
+    var feed = [];
 
     var user;
 
@@ -94,31 +74,45 @@ exports.getMyFeed = function(req, res) {
         },
         function(callback)
         {
-            feed = [];
-        
-            myChallenges(user, function(retData)
+            Feed
+            .find({
+                $or : [
+                    { users : user._id },
+                    { users : { $in : user.friends } }
+                ]
+            })
+            .skip(data.offset)
+            .limit(data.limit)
+            .populate('challenge')
+            .populate('culprit', 'username firstName email')
+            .populate('whoElse', 'username firstName email')
+            .select('-users -notify -seen')
+            .sort('-timestamp')
+            .exec(function(err, retData)
             {
-                var toAdd;
-
-                for(var i in retData)
+                var options = [{
+                    path: 'challenge.info',
+                    model: 'ChallengeBase',
+                    select: '-challenges -def -difficulty'
+                },
                 {
-                    toAdd = new Feed({
-                        challenge : retData[i]._id,
-                    });
+                    path: 'challenge.sender',
+                    model: 'User',
+                    select: 'username firstName email timestamp'
+                },
+                {
+                    path: 'challenge.receiver',
+                    model: 'User',
+                    select: 'username firstName email timestamp'
+                }];
 
-                    if(retData[i].status <= 0)
-                    {
-                        toAdd.whatHappened = 0;
-                    }
-                    else if(retData[i].status == 1 || retData[i].status == 2)
-                    {
-                        toAdd.whatHappened = retData[i].status;
-                    }
+                Feed
+                .populate(retData, options, function(err, retData)
+                {
+                    feed = retData;
 
-                    feed.push(toAdd);
-                }
-
-                callback();
+                    callback();
+                });
             });
         }
     ], function(invalid)

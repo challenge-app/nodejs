@@ -11,6 +11,7 @@ var bcrypt 		= require('bcrypt'),
  */
 var User = userModel.getUserModel();
 
+var timestamp = (new Date().getTime()).toString();
 /*
  * [POST] ADD A NEW FRIEND
  * (need to be authed) 
@@ -85,12 +86,14 @@ exports.addFriend = function(req, res) {
 			else
 			{
 				user.friends.push(friendUser);
+				user.timestamp = timestamp;
 
 				user.save(function(err, reqData)
 				{
 					user = reqData;
 
 					friendUser.friends.push(user);
+					friendUser.timestamp = timestamp;
 
 					callback();
 				});
@@ -178,6 +181,8 @@ exports.edit = function(req, res) {
 				user.phone = data.phone;
 			}
 		
+			user.timestamp = timestamp;
+
 			user.save(function(err, reqData)
 			{
 				user = reqData;
@@ -538,55 +543,73 @@ exports.findAll = function(req, res) {
  */
 exports.addUser = function(req, res) {
 
-    var user        = req.body,
-        invalid     = false,
+    var data        = req.body,
         response    = {},
-        status      = 400;
+        status      = 200;
 
-    if(user.email === undefined)
-    {
-        response.code = 1;
-        callback(true);
-    }
-    else if(user.password === undefined)
-    {
-        response.code = 2;
-        callback(true);
-    }
+    var newUser,
+    	user;
 
-    User.findOne({ email : user.email }).exec(function(err, check)
-    {
-        if(invalid)
-        {
-            res.status(status).send(response);
-            console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-        }
-        else
-        {
-            if(check === null)
-            {
-                user.password = bcrypt.hashSync(user.password, 12);
+	async.series([
+		function(callback)
+		{
+		    if(data.email === undefined)
+		    {
+		        response.code = 1;
+		        callback(true);
+		    }
+		    else if(data.password === undefined)
+		    {
+		        response.code = 2;
+		        callback(true);
+		    }
+		    else
+		    {
+		    	callback();
+		    }
+		},
+		function(callback)
+		{
+		    User
+		    .findOne({ email : data.email })
+		    .exec(function(err, retData)
+		    {
+	            if(retData === null)
+	            {
+	                data.password = bcrypt.hashSync(data.password, 12);
 
-                var newUser = new User({
-                    email : user.email,
-                    password : user.password
-                });
+	                newUser = new User({
+	                    email : data.email,
+	                    password : data.password,
+	                    timestamp : timestamp
+	                });
 
-                newUser.save(function(err, data)
-                {
-                    res.status(200).send(data.noToken());
-                });
-            }
-            else
-            {
-                response.code = 9;
-                status = 422; //422
+	                callback();
+	            }
+	            else
+	            {
+	                response.code = 9;
+	                status = 422;
+					callback(true);
+				}
+		    });
+		},
+		function(callback)
+		{
+	        newUser.save(function(err, retData)
+	        {
+	        	user = retData;
 
-                res.status(status).send(response);
-                console.log('Error: invalid request "'+JSON.stringify(response)+'"');
-            }
-        }
-    });
+	        	callback();
+	        });
+		}
+	], function(invalid)
+	{
+		if(!invalid)
+			response = user;
+
+		res.status(status).send(response);
+	});
 }
 
 exports.deleteAll = function(req, res) {

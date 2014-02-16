@@ -6,7 +6,8 @@ var bcrypt          = require('bcrypt'),
     auth            = require('../config/auth'),
     userModel       = require('../models/user'),
     challengeModel  = require('../models/challenge'),
-    likeDoubtModel  = require('../models/like_doubt');
+    likeDoubtModel  = require('../models/like_doubt'),
+    feedModel       = require('../models/feed');
 
 /*
  * MODELS
@@ -14,7 +15,8 @@ var bcrypt          = require('bcrypt'),
 var User            = userModel.getUserModel(),
     Challenge       = challengeModel.getChallenge(),
     ChallengeBase   = challengeModel.getChallengeBase(),
-    LikeDoubt       = likeDoubtModel.getLikeDoubtModel();
+    LikeDoubt       = likeDoubtModel.getLikeDoubtModel(),
+    Feed            = feedModel.getFeedModel();
 
 var timestamp = (new Date().getTime()).toString();
 
@@ -279,6 +281,20 @@ exports.newChallenge = function(req, res) {
             {
                 chall = retData;
 
+                var feed = new Feed({
+                    users: [],
+                    type: 0,
+                    challenge: chall._id,
+                    notify: true,
+                    seen: false,
+                    timestamp: timestamp
+                });
+
+                feed.users.push(user);
+                feed.users.push(challenged);
+
+                feed.save(function(err, retData){});
+
                 chall
                 .populate('info', '-challenges')
                 .populate('sender', '-friends')
@@ -416,6 +432,7 @@ exports.challengesReceived = function(req, res) {
             Challenge
             .find({ receiver : user._id })
             .sort('-timestamp')
+            .lean()
             .populate('info', '-challenges')
             .populate('sender', '-friends')
             .populate('receiver', '-friends')
@@ -475,6 +492,7 @@ exports.challengesSent = function(req, res) {
             Challenge
             .find({ sender : user._id })
             .sort('-timestamp')
+            .lean()
             .populate('info', '-challenges')
             .populate('sender', '-friends')
             .populate('receiver', '-friends')
@@ -505,13 +523,14 @@ exports.challengesSent = function(req, res) {
 exports.likeChallenge = function(req, res)
 {
     var data = req.body;
-
+    var error = false;
     var response = {};
     var status = 200; //200
 
     var user,
         challenge,
-        likeDoubt;
+        likeDoubt,
+        feed;
 
     async.series([
 
@@ -578,7 +597,8 @@ exports.likeChallenge = function(req, res)
                         userId : user._id,
                         challengeId : data.challengeId,
                         liked : false,
-                        doubted : false
+                        doubted : false,
+                        timestamp : timestamp
                     });
                 }
 
@@ -590,6 +610,58 @@ exports.likeChallenge = function(req, res)
         {
             var error = false;
 
+            Feed
+            .findOne({
+                challenge : challenge._id,
+                type : 4
+            })
+            .exec(function(err, retData)
+            {
+                feed = retData;
+
+                var type;
+
+                if(challenge.status == 1)
+                    type = 4;
+                else if(challenge.status <= 0)
+                    type = 3;
+                
+                if(challenge.status > 1)
+                {
+                    response.code = 17;
+                    status = 422; //422
+                    callback(true);
+                }
+                else
+                {
+                    if(feed == null
+                    || feed === undefined)
+                    {
+                        feed = new Feed({
+                            users: [],
+                            challenge: challenge._id,
+                            type: type,
+                            culprit: user._id,
+                            notify: true,
+                            seen: false,
+                            timestamp: timestamp
+                        });
+                    }
+                    else
+                    {
+                        feed.culprit = user._id;
+                        feed.timestamp = timestamp;
+                    }
+
+                    feed.users.push(challenge.sender);
+                    feed.users.push(challenge.receiver);
+
+                    callback();
+                }
+            });
+        },
+        function(callback)
+        {
             if(challenge.status == 1)
             {
                 if(likeDoubt.liked)
@@ -633,10 +705,11 @@ exports.likeChallenge = function(req, res)
                 {
                     challenge = retData;
 
-                    likeDoubt.save(function(err, retData)
-                    {
-                        likeDoubt = retData;
-                    });
+                    likeDoubt.timestamp = timestamp;
+
+                    likeDoubt.save(function(err, retData) {});
+
+                    feed.save(function(err, retData) {});
 
                     callback();
                 });
@@ -683,7 +756,8 @@ exports.acceptChallenge = function(req, res)
     var status = 200; //200
 
     var user,
-        challenge;
+        challenge,
+        feed;
 
     async.series([
 
@@ -758,6 +832,22 @@ exports.acceptChallenge = function(req, res)
             }
         },
         function(callback)
+        {
+            feed = new Feed({
+                users: [],
+                challenge: challenge._id,
+                type: 1,
+                notify: true,
+                seen: false,
+                timestamp: timestamp
+            });
+
+            feed.users.push(challenge.sender);
+            feed.users.push(challenge.receiver);
+
+            callback();
+        },
+        function(callback)
         { 
             challenge.url = data.url;
             challenge.status = 1; //1
@@ -771,7 +861,9 @@ exports.acceptChallenge = function(req, res)
             });
         },
         function(callback)
-        {            
+        {
+            feed.save(function(err, retData) {});
+
             challenge
             .populate('info', '-challenges')
             .populate('sender', '-friends')
@@ -808,7 +900,8 @@ exports.refuseChallenge = function(req, res)
     var status = 200; //200
 
     var user,
-        challenge;
+        challenge,
+        feed;
 
     async.series([
 
@@ -890,6 +983,24 @@ exports.refuseChallenge = function(req, res)
         },
         function(callback)
         {
+            feed = new Feed({
+                users: [],
+                challenge: challenge._id,
+                type: 2,
+                notify: true,
+                seen: false,
+                timestamp: timestamp
+            });
+
+            feed.users.push(challenge.sender);
+            feed.users.push(challenge.receiver);
+
+            callback();
+        },
+        function(callback)
+        {
+            feed.save(function(err, retData) {});
+
             challenge
             .populate('info', '-challenges')
             .populate('sender', '-friends')
