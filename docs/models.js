@@ -11,7 +11,9 @@ models.push({
 		["firstName", "String", "His first name."],
 		["lastName", "String", "His last name."],
 		["username", "String", "His nickname."],
-		["phone", "String", "His phone number."]
+		["phone", "String", "His phone number."],
+		["following", "User", "Array of users."],
+		["followers", "User", "Array of users."]
 	],
 	example: [
 		{
@@ -20,7 +22,16 @@ models.push({
 			"firstName": "Mauricio",
 			"lastName": "Giordano",
 			"phone": "19991425302",
-			"username": "mgiordano"
+			"username": "mgiordano",
+			"followers": [],
+			"following": 
+			[
+				{
+					"_id": "5301336a7b1560e9012181d4",
+					"email": "mauricio.c.giordano@gmail.com",
+					"timestamp": "1392587587314"
+				}
+			]
 		}
 	]
 });

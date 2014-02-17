@@ -44,7 +44,7 @@ var errors = [
 	{ code: 22,
 		description: "You cannot challenge yourself." },
 	{ code: 23,
-		description: "You can't challenge someone that isn't your friend." },
+		description: "You can't challenge someone that isn't following you." },
 	{ code: 24,
 		description: "Missing parameter 'query'." },
 	{ code: 25,

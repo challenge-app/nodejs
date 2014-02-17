@@ -13,13 +13,13 @@ var User = userModel.getUserModel();
 
 var timestamp = (new Date().getTime()).toString();
 /*
- * [POST] ADD A NEW FRIEND
+ * [POST] FOLLOW A USER
  * (need to be authed) 
  *
  * @param String email
  * @return Friend data
  */
-exports.addFriend = function(req, res) {
+exports.follow = function(req, res) {
 
 	var data = req.body;
 
@@ -27,8 +27,8 @@ exports.addFriend = function(req, res) {
 	var status = 200;
 
 	var user,
-	friendUser,
-	friends;
+	toFollowUser,
+	following;
 
 	async.series([
 
@@ -60,10 +60,10 @@ exports.addFriend = function(req, res) {
 		{
 			User.findOne({ _id : data._id }).exec(function(err, reqData)
 			{
-				friendUser = reqData;
+				toFollowUser = reqData;
 
-				if(friendUser == null
-				|| friendUser === undefined)
+				if(toFollowUser == null
+				|| toFollowUser === undefined)
 				{
 					response.code = 11;
 					status = 422; //422
@@ -77,7 +77,7 @@ exports.addFriend = function(req, res) {
 		},
 		function(callback)
 		{
-			if(user.friends.indexOf(data._id) != -1)
+			if(user.following.indexOf(data._id) != -1)
 			{
 				response.code = 14;
 				status = 422
@@ -85,15 +85,12 @@ exports.addFriend = function(req, res) {
 			}
 			else
 			{
-				user.friends.push(friendUser);
+				user.following.push(toFollowUser);
 				user.timestamp = timestamp;
 
 				user.save(function(err, reqData)
 				{
 					user = reqData;
-
-					friendUser.friends.push(user);
-					friendUser.timestamp = timestamp;
 
 					callback();
 				});
@@ -101,21 +98,35 @@ exports.addFriend = function(req, res) {
 		},
 		function(callback)
 		{
-			friendUser.save(function(err, reqData)
+			if(toFollowUser.followers.indexOf(user._id) == -1)
 			{
-				user.populate('friends', '-friends', function(err, reqData)
-				{
-					friends = reqData.friends;
+				toFollowUser.followers.push(user);
+				toFollowUser.timestamp = timestamp;
 
+				toFollowUser.save(function(err, reqData)
+				{
 					callback();
 				});
+			}
+			else
+			{
+				callback();
+			}
+		},
+		function(callback)
+		{
+			user.populate('following', userModel.onlyPublicSimple(), function(err, reqData)
+			{
+				following = reqData.following;
+
+				callback();
 			});
 		}
 
 	], function(invalid)
 	{
 		if(!invalid)
-			response = friends;
+			response = following;
 
 		res.status(status).send(response);
 	});
@@ -202,18 +213,18 @@ exports.edit = function(req, res) {
 }
 
 /*
- * [GET] GET USER FRIENDS
+ * [GET] GET FOLLOWING USERS
  * (need to be authed) 
  *
- * @return Friends data
+ * @return Users data
  */
-exports.getFriends = function(req, res) {
+exports.getFollowing = function(req, res) {
 	
 	var response = {};
 	var status = 200; //200
 
 	var user,
-		friends;
+		following;
 
 	async.series([
 
@@ -237,9 +248,10 @@ exports.getFriends = function(req, res) {
 		},
 		function(callback)
 		{
-			user.populate('friends','-friends -authenticationToken', function(err, reqData)
+			user
+			.populate('following',userModel.onlyPublicSimple(), function(err, reqData)
 			{
-				friends = reqData.friends;
+				following = reqData.following;
 
 				callback();
 			});
@@ -248,7 +260,62 @@ exports.getFriends = function(req, res) {
 	], function(invalid)
 	{
 		if(!invalid)
-			response = friends;
+			response = following;
+
+		res.status(status).send(response);
+	});
+
+}
+
+/*
+ * [GET] GET FOLLOWERS
+ * (need to be authed) 
+ *
+ * @return Users data
+ */
+exports.getFollowers = function(req, res) {
+	
+	var response = {};
+	var status = 200; //200
+
+	var user,
+		followers;
+
+	async.series([
+
+		function(callback)
+		{
+			auth.isAuthenticated(req, function(reqData)
+			{
+				user = reqData;
+
+				if(user == null)
+				{
+					response.code = 10;
+					status = 401
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			user
+			.populate('followers',userModel.onlyPublicSimple(), function(err, reqData)
+			{
+				followers = reqData.followers;
+
+				callback();
+			});
+		}
+
+	], function(invalid)
+	{
+		if(!invalid)
+			response = followers;
 
 		res.status(status).send(response);
 	});
@@ -260,7 +327,7 @@ exports.getFriends = function(req, res) {
  *
  * @param String email
  * @param String password
- * @return Friends data
+ * @return User data
  */
 exports.auth = function(req, res) {
 
@@ -326,15 +393,11 @@ exports.auth = function(req, res) {
 			{
 				user = reqData;
 
-				user.populate('friends', '-authenticationToken -__v -password -friends',
+				user
+				.populate('following followers', userModel.onlyPublicSimple(),
 					function(err, retData)
 					{
 						user = reqData;
-
-						user = user.toObject();
-
-						delete user.password;
-						delete user.__v;
 
 						callback();
 					}
@@ -433,11 +496,15 @@ exports.findById = function(req, res) {
 
     var id = req.params.id;
 
-    User.findOne({_id : id},'-friends', function(err, user)
+    User
+    .findOne({_id : id})
+    .select(userModel.onlyPublicSimple())
+    .lean()
+    .exec(function(err, user)
     {
         if(user != null)
         {
-            res.send(user.noToken());
+            res.send(user);
         }
         else
         {
@@ -498,7 +565,8 @@ exports.find = function(req, res) {
 					}
 				]
 			})
-			.select('-friends -authenticationToken')
+			.select(userModel.onlyPublicSimple())
+			.lean()
 			.exec(function(err, retData)
 			{
 				users = retData
@@ -522,7 +590,7 @@ exports.find = function(req, res) {
  */
 exports.findAll = function(req, res) {
 
-    User.find().select("-authenticationToken").exec(function (err, users) {
+    User.find().exec(function (err, users) {
         if(err)
         {
             res.status(400).send("Error");

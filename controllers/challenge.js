@@ -195,7 +195,7 @@ exports.newChallenge = function(req, res) {
                     status = 422; //422
                     callback(true);
                 }
-                else if(!user.hasFriend(challenged._id))
+                else if(user.followers.indexOf(challenged._id) == -1)
                 {
                     response.code = 23;
                     status = 422; //422
@@ -297,8 +297,8 @@ exports.newChallenge = function(req, res) {
 
                 chall
                 .populate('info', '-challenges')
-                .populate('sender', '-friends')
-                .populate('receiver', '-friends', function(err, retData)
+                .populate('sender', usersModel.onlyPublicSimple())
+                .populate('receiver', usersModel.onlyPublicSimple(), function(err, retData)
                 {
                     chall = retData;
 
@@ -434,8 +434,8 @@ exports.challengesReceived = function(req, res) {
             .sort('-timestamp')
             .lean()
             .populate('info', '-challenges')
-            .populate('sender', '-friends')
-            .populate('receiver', '-friends')
+            .populate('sender', usersModel.onlyPublicSimple())
+            .populate('receiver', usersModel.onlyPublicSimple())
             .exec(function(err, retData)
             {
                 challenges = retData;
@@ -494,8 +494,8 @@ exports.challengesSent = function(req, res) {
             .sort('-timestamp')
             .lean()
             .populate('info', '-challenges')
-            .populate('sender', '-friends')
-            .populate('receiver', '-friends')
+            .populate('sender', usersModel.onlyPublicSimple())
+            .populate('receiver', usersModel.onlyPublicSimple())
             .exec(function(err, retData)
             {
                 challenges = retData;
@@ -723,8 +723,8 @@ exports.likeChallenge = function(req, res)
         {            
             challenge
             .populate('info', '-challenges')
-            .populate('sender', '-friends')
-            .populate('receiver', '-friends', function(err, retData)
+            .populate('sender', usersModel.onlyPublicSimple())
+            .populate('receiver', usersModel.onlyPublicSimple(), function(err, retData)
             {
                 challenge = retData;
 
@@ -866,8 +866,8 @@ exports.acceptChallenge = function(req, res)
 
             challenge
             .populate('info', '-challenges')
-            .populate('sender', '-friends')
-            .populate('receiver', '-friends', function(err, retData)
+            .populate('sender', usersModel.onlyPublicSimple())
+            .populate('receiver', usersModel.onlyPublicSimple(), function(err, retData)
             {
                 challenge = retData;
 
@@ -1003,8 +1003,8 @@ exports.refuseChallenge = function(req, res)
 
             challenge
             .populate('info', '-challenges')
-            .populate('sender', '-friends')
-            .populate('receiver', '-friends', function(err, retData)
+            .populate('sender', usersModel.onlyPublicSimple())
+            .populate('receiver', usersModel.onlyPublicSimple(), function(err, retData)
             {
                 challenge = retData;
 

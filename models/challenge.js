@@ -50,39 +50,3 @@ exports.getChallenge = function()
 {
 	return Challenge;
 }
-
-/*
-exports.mixChallenge = function(chall, challBase)
-{
-	var result = {};
-
-	result.challengeBaseId 	= chall.challengeBaseId;
-	result.senderId 				= chall.senderId;
-	result.receiverId 			= chall.receiverId;
-	result.reward 					= chall.reward;
-
-	if(challBase === undefined)
-	{
-		ChallengeBase.findOne({_id : chall.challengeBaseId}, function(err, base)
-		{
-			if(base == null)
-			{
-				throw "Something is really wrong! I can't find the challenge base!";
-			}
-			else
-			{
-				result.description 			= base.description;
-				result.votes 						= base.votes;
-
-				return result;
-			}
-		});
-	}
-	else
-	{
-		result.description 			= challBase.description;
-		result.votes 						= challBase.votes;
-
-		return result;
-	}
-}*/

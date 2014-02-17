@@ -5,7 +5,8 @@ var userSchema = mongoose.Schema({
     email: String,
     password: String,
     authenticationToken: String,
-  	friends : [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    following : [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  	followers : [{ type: Schema.Types.ObjectId, ref: 'User' }],
   	reputation : Number,
   	username : String,
   	firstName : String,
@@ -18,32 +19,22 @@ userSchema.set('toJSON', {
     transform: function(doc, ret, options) {
         delete ret.password;
         delete ret.__v;
-        delete ret.friends;
     }
 });
-
-userSchema.methods.noToken = function()
-{
-	this.authenticationToken = undefined;
-
-	return this;
-}
-
-userSchema.methods.hasFriend = function(id)
-{
-	if(this.friends.indexOf(id) != -1)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
 
 var User = mongoose.model('User', userSchema);
 
 exports.getUserModel = function()
 {
 	return User;
+}
+
+exports.onlyPublic = function()
+{
+  return '-authenticationToken';
+}
+
+exports.onlyPublicSimple = function()
+{
+  return '-authenticationToken -followers -following';
 }

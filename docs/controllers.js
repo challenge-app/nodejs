@@ -197,7 +197,7 @@ controllers.push({
 			]
 		},
 		{
-			routeName: "/friends",
+			routeName: "/following",
 			method: "GET",
 			params: [
 				[],
@@ -211,24 +211,53 @@ controllers.push({
 				[401, "error", "{ code : 10 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
-			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> collection (his friends).</p>",
+			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> collection that you are following.</p>",
 			example: [
-				'[GET] URL /user/friends',
+				'[GET] URL /user/following',
 				'PARAMETERS',
 				'HEADERS X-AUTH-TOKEN=$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
 				'STATUS 200 OK',
-				{
-					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com",
-					"friends": {
+				[
+					{
 						"_id": "42e863d7fc1c121857d152f6",
-						"email": "friend@teste.com"
+						"email": "friend@teste.com",
+						"firstName": "Mauricio"
 					}
-				}
+				]
 			]
 		},
 		{
-			routeName: "/friend",
+			routeName: "/followers",
+			method: "GET",
+			params: [
+				[],
+				[],
+			],
+			headers: [
+				[],
+				["X-AUTH-TOKEN"],
+			],
+			returns: [
+				[401, "error", "{ code : 10 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
+			],
+			description: "Will try to recover a <a href=\"#\" data-trigger=\"user-model\">User</a> collection that you are followers.</p>",
+			example: [
+				'[GET] URL /user/followers',
+				'PARAMETERS',
+				'HEADERS X-AUTH-TOKEN=$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
+				'STATUS 200 OK',
+				[
+					{
+						"_id": "42e863d7fc1c121857d152f6",
+						"email": "abc@teste.com",
+						"firstName": "Roberto"
+					}
+				]
+			]
+		},
+		{
+			routeName: "/follow",
 			method: "POST",
 			params: [
 				[],
@@ -251,20 +280,24 @@ controllers.push({
 				[422, "error", "{ code : 14 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
 			],
-			description: "Will try to add a new friend of <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
+			description: "Will try to follow a <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
 			example: [
-				'[POST] URL /user/friend',
+				'[POST] URL /user/follow',
 				'PARAMETERS { _id : "42e863d7fc1c121857d152f6" }',
 				'HEADERS X-AUTH-TOKEN=$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
-				'STATUS 200 OK',
-				{
-					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com",
-					"friends": {
+				'STATUS 200 OK', 
+				[
+					{
 						"_id": "42e863d7fc1c121857d152f6",
-						"email": "friend@teste.com"
+						"email": "friend@teste.com",
+						"firstName": "Mauricio"
+					},
+					{
+						"_id": "42e863d7fc1c121857d152f6",
+						"email": "friend2@teste.com",
+						"firstName": "Gabriel"
 					}
-				}
+				]
 			]
 		},
 	]
@@ -695,7 +728,7 @@ controllers.push({
 				[400, "error", "{ code : 26 }"],
 				[200, "success", "<a href=\"#\" data-trigger=\"feed-model\">Feed</a>"]
 			],
-			description: "Will try to recover the user's <a href=\"#\" data-trigger=\"feed-model\">Feed</a>.",
+			description: "Will try to recover the user's <a href=\"#\" data-trigger=\"feed-model\">Feed (include his notifications and notifications from his follows</a>.",
 			example: [
 				'[GET] URL /feed',
 				'PARAMETERS { limit : 1, offset : 0 }',

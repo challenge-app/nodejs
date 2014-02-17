@@ -67,7 +67,8 @@ app.get('/', docs.showDocs);
  */
 app.get('/user', user.findMe);
 app.get('/user/logout', user.unAuth);
-app.get('/user/friends', user.getFriends);
+app.get('/user/following', user.getFollowing);
+app.get('/user/followers', user.getFollowers);
 app.get('/user/deleteAll', user.deleteAll);
 
 app.get('/user/:id', user.findById);
@@ -75,7 +76,7 @@ app.get('/user/:id', user.findById);
 /*
  * USER POST ROUTES
  */
-app.post('/user/friend', user.addFriend);
+app.post('/user/follow', user.follow);
 app.post('/user/auth', user.auth);
 app.post('/user/find', user.find);
 app.post('/user/edit', user.edit);

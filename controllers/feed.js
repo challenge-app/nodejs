@@ -78,7 +78,7 @@ exports.getMyFeed = function(req, res) {
             .find({
                 $or : [
                     { users : user._id },
-                    { users : { $in : user.friends } }
+                    { users : { $in : user.following } }
                 ]
             })
             .skip(data.offset)
