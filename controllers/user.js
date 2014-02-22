@@ -526,7 +526,7 @@ exports.find = function(req, res) {
 
 	var data        = req.body,
 		response    = {},
-		status      = 400;
+		status      = 200;
 
 	var users;
 
@@ -536,6 +536,7 @@ exports.find = function(req, res) {
 			if(data.query === undefined)
 			{
 				response.code = 24; //Missing parameter 'query'
+				status = 400;
 				callback(true);
 			}
 			else
