@@ -26,7 +26,7 @@ var errors = [
 	{ code: 13,
 		description: "You just have signed out." },
 	{ code: 14,
-		description: "He is already your friend." },
+		description: "You are already following him." },
 	{ code: 15,
 		description: "Parameter 'type' must be equal to 'video' or 'picture'." },
 	{ code: 16,
@@ -50,7 +50,9 @@ var errors = [
 	{ code: 25,
 		description: "Missing parameter 'limit'." },
 	{ code: 26,
-		description: "Missing parameter 'offset'." }
+		description: "Missing parameter 'offset'." },
+	{ code: 27,
+		description: "You aren't following him." }
 ];
 
 exports.getErrors = function()

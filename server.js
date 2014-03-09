@@ -77,6 +77,7 @@ app.get('/user/:id', user.findById);
  * USER POST ROUTES
  */
 app.post('/user/follow', user.follow);
+app.post('/user/unfollow', user.unfollow);
 app.post('/user/auth', user.auth);
 app.post('/user/find', user.find);
 app.post('/user/edit', user.edit);
@@ -89,6 +90,7 @@ app.get('/challenge/received', challenge.challengesReceived);
 app.get('/challenge/sent', challenge.challengesSent);
 app.get('/challenge/random', challenge.randomChallenges);
  
+app.get('/challenge/:id', challenge.findById);
 /*
  * CHALLENGE POST ROUTES
  */

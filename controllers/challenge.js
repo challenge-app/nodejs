@@ -1020,3 +1020,35 @@ exports.refuseChallenge = function(req, res)
         res.status(status).send(response);
     });
 }
+
+/*
+ * [GET] FIND A CHALLENGE BY ID
+ *
+ * @param String _id
+ * @return User data
+ */
+exports.findById = function(req, res) {
+
+    var id = req.params.id;
+
+    Challenge
+    .findOne({_id : id})
+    .lean()
+    .populate('info')
+    .populate('sender')
+    .populate('received')
+    .exec(function(err, challenge)
+    {
+        if(challenge != null)
+        {
+            res.send(challenge);
+        }
+        else
+        {
+            var response = {};
+
+            response.code = 16;
+            res.status(422).send(response);
+        }
+    });
+};

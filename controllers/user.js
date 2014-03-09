@@ -134,6 +134,127 @@ exports.follow = function(req, res) {
 }
 
 /*
+ * [POST] UNFOLLOW A USER
+ * (need to be authed) 
+ *
+ * @param String email
+ * @return Friend data
+ */
+exports.unfollow = function(req, res) {
+
+	var data = req.body;
+
+	var response = {};
+	var status = 200;
+
+	var user,
+	toUnfollowUser,
+	following;
+
+	async.series([
+
+		function(callback)
+		{
+			auth.isAuthenticated(req, function(reqData)
+			{
+				user = reqData;
+
+				if(user == null)
+				{
+					response.code = 10;
+					status = 401; //401
+					callback(true);
+				}
+				else if(data._id === undefined)
+				{
+					response.code = 3;
+					status = 400; //400
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			User.findOne({ _id : data._id }).exec(function(err, reqData)
+			{
+				toUnfollowUser = reqData;
+
+				if(toUnfollowUser == null
+				|| toUnfollowUser === undefined)
+				{
+					response.code = 11;
+					status = 422; //422
+					callback(true);
+				}
+				else
+				{
+					callback();
+				}
+			});
+		},
+		function(callback)
+		{
+			if(user.following.indexOf(data._id) != -1)
+			{
+				user.following.splice(data._id,1);
+				user.timestamp = timestamp;
+
+				user.save(function(err, reqData)
+				{
+					user = reqData;
+
+					callback();
+				});
+			}
+			else
+			{
+				response.code = 27;
+				status = 422
+				callback(true);
+			}
+		},
+		function(callback)
+		{
+			if(toUnfollowUser.followers.indexOf(user._id) != -1)
+			{
+				toUnfollowUser.followers.splice(user._id,1);
+				toUnfollowUser.timestamp = timestamp;
+
+				toUnfollowUser.save(function(err, reqData)
+				{
+					callback();
+				});
+			}
+			else
+			{
+				callback();
+			}
+		},
+		function(callback)
+		{
+			user.populate('following', userModel.onlyPublicSimple(), function(err, reqData)
+			{
+				following = reqData.following;
+
+				callback();
+			});
+		}
+
+	], function(invalid)
+	{
+		if(!invalid)
+			response = following;
+
+		res.status(status).send(response);
+	});
+
+}
+
+/*
  * [POST] EDIT THE USER
  * (need to be authed) 
  *
