@@ -300,6 +300,45 @@ controllers.push({
 				]
 			]
 		},
+		{
+			routeName: "/unfollow",
+			method: "POST",
+			params: [
+				[],
+				[],
+				["_id"],
+				["_id"],
+				["_id"],
+			],
+			headers: [
+				[],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+			],
+			returns: [
+				[401, "error", "{ code : 10 }"],
+				[400, "error", "{ code : 3 }"],
+				[422, "error", "{ code : 11 }"],
+				[422, "error", "{ code : 27 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
+			],
+			description: "Will try to unfollow a <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
+			example: [
+				'[POST] URL /user/unfollow',
+				'PARAMETERS { _id : "42e863d7fc1c121857d152f6" }',
+				'HEADERS X-AUTH-TOKEN=$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O',
+				'STATUS 200 OK', 
+				[
+					{
+						"_id": "42e863d7fc1c121857d152f6",
+						"email": "friend@teste.com",
+						"firstName": "Mauricio"
+					},
+				]
+			]
+		},
 	]
 });
 
@@ -364,6 +403,53 @@ controllers.push({
 					"reward": 10,
 					"likes": 0,
 					"doubts": 1,
+					"timestamp": "1390980083413",
+					"_id": "52e8abf53d7dd12f76eeb1a8"
+				}
+			]
+		},
+		{
+			routeName: "/$_id",
+			method: "GET",
+			params: [
+				[],
+				[],
+			],
+			headers: [
+				[],
+				[],
+			],
+			returns: [
+				[422, "error", "{ code : 16 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"challenge-model\">Challenge</a>"]
+			],
+			description: "Will try to recover a <a href=\"#\" data-trigger=\"challenge-model\">Challenge</a> by its $_id.</p>",
+			example: [
+				'[GET] URL /challege/52e8abf53d7dd12f76eeb1a8',
+				'PARAMETERS',
+				'HEADERS',
+				'STATUS 200 OK',
+				{
+					"info": {
+						"description": "I dare you to walk with a horse mask!",
+						"generalLikes": 0,
+						"timestamp": "1390980083413",
+						"_id": "52e8abf53d7dd12f76eeb1a7"
+					},
+					"sender": {
+						"_id": "52e863ecfc1c741857d152f7",
+						"email": "b"
+					},
+					"receiver": {
+						"_id": "52e863d7fc1c741857d152f6",
+						"email": "a"
+					},
+					"status": -1,
+					"url": "http://youtube.com/ASfq@31=",
+					"type": "video",
+					"reward": 10,
+					"likes": 0,
+					"doubts": 0,
 					"timestamp": "1390980083413",
 					"_id": "52e8abf53d7dd12f76eeb1a8"
 				}
