@@ -52,7 +52,9 @@ var errors = [
 	{ code: 26,
 		description: "Missing parameter 'offset'." },
 	{ code: 27,
-		description: "You aren't following him." }
+		description: "You aren't following him." },
+	{ code: 28,
+		description: "Give me at least one field." }
 ];
 
 exports.getErrors = function()

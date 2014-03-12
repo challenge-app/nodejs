@@ -66,6 +66,41 @@ controllers.push({
 			]
 		},
 		{
+			routeName: "/edit",
+			method: "POST",
+			params: [
+				[],
+				[],
+				["firstName"],
+				["firstName", "lastName", "..."],
+			],
+			headers: [
+				[],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+				["X-AUTH-TOKEN"],
+			],
+			returns: [
+				[401, "error", "{ code : 10 }"],
+				[400, "error", "{ code : 28 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"],
+			],
+			description: "Will try to edit fields from <a href=\"#\" data-trigger=\"user-model\">User</a> in session.</p>",
+			example: [
+				'[POST] URL /user/edit',
+				'PARAMETERS { firstName: "Bruno", lastName: "Lemos" }',
+				'HEADERS X-AUTH-TOKEN=$2a$12$yvxdiZlYhdy7KF.wwH.J9eaeJ/UytKfsqfZ4FPt4ryoFbQdA24kDe',
+				'STATUS 200 OK',
+				{
+					"_id": "52e863d7fc1c741857d152f6",
+					"email": "abc@teste.com",
+					"firstName": "Bruno",
+					"lastName": "Lemos"
+				}
+			]
+		},
+		{
 			routeName: "/$_id",
 			method: "GET",
 			params: [

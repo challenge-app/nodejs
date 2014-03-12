@@ -198,9 +198,11 @@ exports.unfollow = function(req, res) {
 		},
 		function(callback)
 		{
-			if(user.following.indexOf(data._id) != -1)
+			var userIndex = user.following.indexOf(data._id);
+
+			if(userIndex != -1)
 			{
-				user.following.splice(data._id,1);
+				user.following.splice(userIndex,1);
 				user.timestamp = timestamp;
 
 				user.save(function(err, reqData)
@@ -219,9 +221,11 @@ exports.unfollow = function(req, res) {
 		},
 		function(callback)
 		{
-			if(toUnfollowUser.followers.indexOf(user._id) != -1)
+			var userIndex = toUnfollowUser.followers.indexOf(user._id);
+
+			if(userIndex != -1)
 			{
-				toUnfollowUser.followers.splice(user._id,1);
+				toUnfollowUser.followers.splice(userIndex,1);
 				toUnfollowUser.timestamp = timestamp;
 
 				toUnfollowUser.save(function(err, reqData)
