@@ -72,6 +72,8 @@ app.get('/user/followers', user.getFollowers);
 app.get('/user/deleteAll', user.deleteAll);
 
 app.get('/user/:id', user.findById);
+app.get('/user/:id/following', user.followingById);
+app.get('/user/:id/followers', user.followersById);
 
 /*
  * USER POST ROUTES

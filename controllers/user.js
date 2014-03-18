@@ -11,7 +11,10 @@ var bcrypt 		= require('bcrypt'),
  */
 var User = userModel.getUserModel();
 
-var timestamp = (new Date().getTime()).toString();
+var timestamp = function()
+{
+    return (new Date().getTime()).toString();
+}
 /*
  * [POST] FOLLOW A USER
  * (need to be authed) 
@@ -86,7 +89,7 @@ exports.follow = function(req, res) {
 			else
 			{
 				user.following.push(toFollowUser);
-				user.timestamp = timestamp;
+				user.timestamp = timestamp();
 
 				user.save(function(err, reqData)
 				{
@@ -101,7 +104,7 @@ exports.follow = function(req, res) {
 			if(toFollowUser.followers.indexOf(user._id) == -1)
 			{
 				toFollowUser.followers.push(user);
-				toFollowUser.timestamp = timestamp;
+				toFollowUser.timestamp = timestamp();
 
 				toFollowUser.save(function(err, reqData)
 				{
@@ -203,7 +206,7 @@ exports.unfollow = function(req, res) {
 			if(userIndex != -1)
 			{
 				user.following.splice(userIndex,1);
-				user.timestamp = timestamp;
+				user.timestamp = timestamp();
 
 				user.save(function(err, reqData)
 				{
@@ -226,7 +229,7 @@ exports.unfollow = function(req, res) {
 			if(userIndex != -1)
 			{
 				toUnfollowUser.followers.splice(userIndex,1);
-				toUnfollowUser.timestamp = timestamp;
+				toUnfollowUser.timestamp = timestamp();
 
 				toUnfollowUser.save(function(err, reqData)
 				{
@@ -317,11 +320,23 @@ exports.edit = function(req, res) {
 				user.phone = data.phone;
 			}
 		
-			user.timestamp = timestamp;
+			user.timestamp = timestamp();
 
 			user.save(function(err, reqData)
 			{
 				user = reqData;
+
+				user = user.toObject();
+
+				user.count = {
+					following : user.following.length,
+					followers : user.followers.length
+				}
+
+				delete user.following;
+				delete user.followers;
+				delete user.password;
+				delete user.__v;
 
 				callback();
 			});
@@ -604,6 +619,18 @@ exports.findMe = function(req, res) {
 		else
 		{
 			response = user;
+
+			response = response.toObject();
+
+			response.count = {
+				following : response.following.length,
+				followers : response.followers.length
+			}
+
+			delete response.following;
+			delete response.followers;
+			delete response.password;
+			delete response.__v;
 		}
 
 		res.status(status).send(response);
@@ -623,17 +650,119 @@ exports.findById = function(req, res) {
 
     User
     .findOne({_id : id})
-    .select(userModel.onlyPublicSimple())
+    .select(userModel.onlyPublic())
     .lean()
     .exec(function(err, user)
     {
         if(user != null)
         {
+			user.count = {
+				following : user.following.length,
+				followers : user.followers.length
+			}
+
+			delete user.following;
+			delete user.followers;
+			delete user.password;
+			delete user.__v;
+
             res.send(user);
         }
         else
         {
             var response = {};
+
+            response.code = 11;
+            res.status(422).send(response);
+        }
+    });
+};
+
+/*
+ * [GET] FIND FOLLOWING BY USER ID
+ *
+ * @param String _id
+ * @return User data
+ */
+exports.followingById = function(req, res) {
+
+    var id = req.params.id;
+    var response;
+
+    User
+    .findOne({_id : id})
+    .select('following')
+    .populate('following')
+    .lean()
+    .exec(function(err, user)
+    {
+        if(user != null)
+        {
+			for(var i in user.following)
+			{
+				user.following[i].count = {
+					following : user.following[i].following.length,
+					followers : user.following[i].followers.length
+				}
+
+				delete user.following[i].following;
+				delete user.following[i].followers;
+				delete user.following[i].__v;
+				delete user.following[i].password;
+				delete user.following[i].authenticationToken;
+			}
+
+            res.send(user.following);
+        }
+        else
+        {
+            response = {};
+
+            response.code = 11;
+            res.status(422).send(response);
+        }
+    });
+};
+
+/*
+ * [GET] FIND FOLLOWERS BY USER ID
+ *
+ * @param String _id
+ * @return User data
+ */
+exports.followersById = function(req, res) {
+
+    var id = req.params.id;
+    var response;
+
+    User
+    .findOne({_id : id})
+    .select('followers')
+    .populate('followers')
+    .lean()
+    .exec(function(err, user)
+    {
+        if(user != null)
+        {
+			for(var i in user.followers)
+			{
+				user.followers[i].count = {
+					following : user.followers[i].following.length,
+					followers : user.followers[i].followers.length
+				}
+
+				delete user.followers[i].following;
+				delete user.followers[i].followers;
+				delete user.followers[i].__v;
+				delete user.followers[i].password;
+				delete user.followers[i].authenticationToken;
+			}
+
+            res.send(user.followers);
+        }
+        else
+        {
+            response = {};
 
             response.code = 11;
             res.status(422).send(response);
@@ -691,11 +820,23 @@ exports.find = function(req, res) {
 					}
 				]
 			})
-			.select(userModel.onlyPublicSimple())
+    		.select(userModel.onlyPublic())
 			.lean()
 			.exec(function(err, retData)
 			{
-				users = retData
+				users = retData;
+
+				for(var i in users)
+				{
+					users[i].count = {
+						following : users[i].following.length,
+						followers : users[i].followers.length
+					}
+
+					delete users[i].following;
+					delete users[i].followers;
+					delete users[i].__v;
+				}
 
 				callback();
 			});
@@ -775,7 +916,7 @@ exports.addUser = function(req, res) {
 	                newUser = new User({
 	                    email : data.email,
 	                    password : data.password,
-	                    timestamp : timestamp
+	                    timestamp : timestamp()
 	                });
 
 	                callback();

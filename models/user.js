@@ -31,10 +31,10 @@ exports.getUserModel = function()
 
 exports.onlyPublic = function()
 {
-  return '-authenticationToken';
+  return '-authenticationToken -password';
 }
 
 exports.onlyPublicSimple = function()
 {
-  return '-authenticationToken -followers -following';
+  return '-authenticationToken -password -followers -following';
 }

@@ -18,7 +18,10 @@ var User            = userModel.getUserModel(),
     LikeDoubt       = likeDoubtModel.getLikeDoubtModel(),
     Feed            = feedModel.getFeedModel();
 
-var timestamp = (new Date().getTime()).toString();
+var timestamp = function()
+{
+    return (new Date().getTime()).toString();
+}
 
 /*
  * [POST] CREATE A CHALLENGEBASE
@@ -87,7 +90,7 @@ exports.newChallengeBase = function(req, res) {
                 generalDoubts : 0,
                 def : def,
                 difficulty : difficulty,
-                timestamp : timestamp
+                timestamp : timestamp()
             });
 
             challBase.save(function(err, retData)
@@ -249,7 +252,7 @@ exports.newChallenge = function(req, res) {
                     generalDoubts : 0,
                     def : def,
                     difficulty : difficulty,
-                    timestamp : timestamp
+                    timestamp : timestamp()
                 });
 
                 challBase.save(function(err, retData)
@@ -274,7 +277,7 @@ exports.newChallenge = function(req, res) {
                 reward: data.reward,
                 likes: 0,
                 doubts: 0,
-                timestamp : timestamp
+                timestamp : timestamp()
             });
 
             chall.save(function(err, retData)
@@ -287,7 +290,7 @@ exports.newChallenge = function(req, res) {
                     challenge: chall._id,
                     notify: true,
                     seen: false,
-                    timestamp: timestamp
+                    timestamp: timestamp()
                 });
 
                 feed.users.push(user);
@@ -598,7 +601,7 @@ exports.likeChallenge = function(req, res)
                         challengeId : data.challengeId,
                         liked : false,
                         doubted : false,
-                        timestamp : timestamp
+                        timestamp : timestamp()
                     });
                 }
 
@@ -644,13 +647,13 @@ exports.likeChallenge = function(req, res)
                             culprit: user._id,
                             notify: true,
                             seen: false,
-                            timestamp: timestamp
+                            timestamp: timestamp()
                         });
                     }
                     else
                     {
                         feed.culprit = user._id;
-                        feed.timestamp = timestamp;
+                        feed.timestamp = timestamp();
                     }
 
                     feed.users.push(challenge.sender);
@@ -705,7 +708,7 @@ exports.likeChallenge = function(req, res)
                 {
                     challenge = retData;
 
-                    likeDoubt.timestamp = timestamp;
+                    likeDoubt.timestamp = timestamp();
 
                     likeDoubt.save(function(err, retData) {});
 
@@ -839,7 +842,7 @@ exports.acceptChallenge = function(req, res)
                 type: 1,
                 notify: true,
                 seen: false,
-                timestamp: timestamp
+                timestamp: timestamp()
             });
 
             feed.users.push(challenge.sender);
@@ -851,7 +854,7 @@ exports.acceptChallenge = function(req, res)
         { 
             challenge.url = data.url;
             challenge.status = 1; //1
-            challenge.timestamp = timestamp;
+            challenge.timestamp = timestamp();
 
             challenge.save(function(err, retData)
             {
@@ -972,7 +975,7 @@ exports.refuseChallenge = function(req, res)
         function(callback)
         { 
             challenge.status = 2; //2
-            challenge.timestamp = timestamp;
+            challenge.timestamp = timestamp();
 
             challenge.save(function(err, retData)
             {
@@ -989,7 +992,7 @@ exports.refuseChallenge = function(req, res)
                 type: 2,
                 notify: true,
                 seen: false,
-                timestamp: timestamp
+                timestamp: timestamp()
             });
 
             feed.users.push(challenge.sender);

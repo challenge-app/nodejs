@@ -35,6 +35,16 @@ controllers.push({
 					"_id": "52e863d7fc1c741857d152f6",
 					"email": "abc@teste.com",
 					"authenticationToken": "$2a$12$yvxdiZlYhdy7KF.wwH.J9eaeJ/UytKfsqfZ4FPt4ryoFbQdA24kDe",
+					"following":
+					[
+						{
+							"_id": "5301336a7b1560e9012181d4",
+							"email": "mauricio.c.giordano@gmail.com",
+							"firstName": "Mauricio",
+							"timestamp": "1395148847692"
+						}
+					],
+					"followers": []
 				}
 			]
 		},
@@ -61,7 +71,13 @@ controllers.push({
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com"
+					"email": "abc@teste.com",
+					"firstName": "ABC",
+					"count":
+					{
+						"following": 10,
+						"followers": 1
+					}
 				}
 			]
 		},
@@ -96,7 +112,12 @@ controllers.push({
 					"_id": "52e863d7fc1c741857d152f6",
 					"email": "abc@teste.com",
 					"firstName": "Bruno",
-					"lastName": "Lemos"
+					"lastName": "Lemos",
+					"count":
+					{
+						"following": 10,
+						"followers": 1
+					}
 				}
 			]
 		},
@@ -123,8 +144,85 @@ controllers.push({
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com"
+					"email": "abc@teste.com",
+					"count":
+					{
+						"following": 10,
+						"followers": 1
+					}
 				}
+			]
+		},
+		{
+			routeName: "/$_id/following",
+			method: "GET",
+			params: [
+				[],
+				[],
+			],
+			headers: [
+				[],
+				[],
+			],
+			returns: [
+				[422, "error", "{ code : 11 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
+			],
+			description: "Will try to recover <a href=\"#\" data-trigger=\"user-model\">Users</a> by the follower $_id.</p>",
+			example: [
+				'[GET] URL /user/5301335d7b1560e9012181d3/following',
+				'PARAMETERS',
+				'HEADERS',
+				'STATUS 200 OK',
+				[
+					{
+						"_id": "52e863d7fc1c741857d152f6",
+						"email": "mcgiordalp@gmail.com",
+						"firstName": "Mauricio",
+						"lastName": "Giordano",
+						"timestamp": "1395149424797",
+						"count": {
+							"following": 1,
+							"followers": 1
+						}
+					}
+				]
+			]
+		},
+		{
+			routeName: "/$_id/followers",
+			method: "GET",
+			params: [
+				[],
+				[],
+			],
+			headers: [
+				[],
+				[],
+			],
+			returns: [
+				[422, "error", "{ code : 11 }"],
+				[200, "success", "<a href=\"#\" data-trigger=\"user-model\">User</a>"]
+			],
+			description: "Will try to recover <a href=\"#\" data-trigger=\"user-model\">Users</a> by the following $_id.</p>",
+			example: [
+				'[GET] URL /user/52e863d7fc1c741857d152f6/followers',
+				'PARAMETERS',
+				'HEADERS',
+				'STATUS 200 OK',
+				[
+					{
+						"_id": "5301335d7b1560e9012181d3",
+						"email": "brunolemos@gmail.com",
+						"firstName": "Bruno",
+						"lastName": "Lemos",
+						"timestamp": "1395149424797",
+						"count": {
+							"following": 1,
+							"followers": 1
+						}
+					}
+				]
 			]
 		},
 		{
@@ -155,7 +253,12 @@ controllers.push({
 						"firstName": "Mauricio",
 						"lastName": "Giordano",
 						"username": "mgiordano",
-						"phone": "199999999"
+						"phone": "199999999",
+						"count":
+						{
+							"following": 10,
+							"followers": 1
+						}
 					},
 					{
 						"_id": "52e863d7fc1c741857d15212",
@@ -163,7 +266,12 @@ controllers.push({
 						"firstName": "Roberto",
 						"lastName": "Aguiar",
 						"username": "ragmail",
-						"phone": "199999999"
+						"phone": "199999999",
+						"count":
+						{
+							"following": 10,
+							"followers": 1
+						}
 					}
 				]
 			]
@@ -201,7 +309,15 @@ controllers.push({
 				{
 					"_id": "52e863d7fc1c741857d152f6",
 					"email": "abc@teste.com",
-					"authenticationToken": "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O"
+					"authenticationToken": "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O",
+					"followers": [],
+					"following": [
+						{
+							"_id": "5301336a7b1560e9012181d4",
+							"email": "mauricio.c.giordano@gmail.com",
+							"timestamp": "1395148847692"
+						}
+					]
 				}
 			]
 		},
