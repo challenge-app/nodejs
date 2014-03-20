@@ -913,10 +913,13 @@ exports.addUser = function(req, res) {
 	            {
 	                data.password = bcrypt.hashSync(data.password, 12);
 
+					var token = bcrypt.hashSync(timestamp()+data.email,12);
+
 	                newUser = new User({
 	                    email : data.email,
 	                    password : data.password,
-	                    timestamp : timestamp()
+	                    timestamp : timestamp(),
+	                    authenticationToken : token
 	                });
 
 	                callback();

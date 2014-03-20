@@ -35,15 +35,7 @@ controllers.push({
 					"_id": "52e863d7fc1c741857d152f6",
 					"email": "abc@teste.com",
 					"authenticationToken": "$2a$12$yvxdiZlYhdy7KF.wwH.J9eaeJ/UytKfsqfZ4FPt4ryoFbQdA24kDe",
-					"following":
-					[
-						{
-							"_id": "5301336a7b1560e9012181d4",
-							"email": "mauricio.c.giordano@gmail.com",
-							"firstName": "Mauricio",
-							"timestamp": "1395148847692"
-						}
-					],
+					"following": [],
 					"followers": []
 				}
 			]
@@ -73,11 +65,16 @@ controllers.push({
 					"_id": "52e863d7fc1c741857d152f6",
 					"email": "abc@teste.com",
 					"firstName": "ABC",
-					"count":
-					{
-						"following": 10,
-						"followers": 1
-					}
+					"following":
+					[
+						{
+							"_id": "5301336a7b1560e9012181d4",
+							"email": "mauricio.c.giordano@gmail.com",
+							"firstName": "Mauricio",
+							"timestamp": "1395148847692"
+						}
+					],
+					"followers": []
 				}
 			]
 		},
