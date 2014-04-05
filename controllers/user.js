@@ -465,7 +465,7 @@ exports.getFollowers = function(req, res) {
 /*
  * [POST] AUTH A USER
  *
- * @param String email
+ * @param String username
  * @param String password
  * @return User data
  */
@@ -481,7 +481,7 @@ exports.auth = function(req, res) {
 	async.series([
 		function(callback)
 		{
-			if(data.email === undefined)
+			if(data.username === undefined)
 			{
 				response.code = 1;
 				status = 400; //400
@@ -500,7 +500,7 @@ exports.auth = function(req, res) {
 		},
 		function(callback)
 		{
-			User.findOne({ email : data.email }).exec(function(err, reqData)
+			User.findOne({ username : data.username }).exec(function(err, reqData)
 			{
 				user = reqData;
 
@@ -527,7 +527,7 @@ exports.auth = function(req, res) {
 		{
 			var timestamp = (new Date().getTime()).toString();
 
-			user.authenticationToken = bcrypt.hashSync(timestamp+user.email,12);
+			user.authenticationToken = bcrypt.hashSync(timestamp+user.username,12);
 
 			user.save(function(err, reqData)
 			{
@@ -888,7 +888,7 @@ exports.addUser = function(req, res) {
 	async.series([
 		function(callback)
 		{
-		    if(data.email === undefined)
+		    if(data.username === undefined)
 		    {
 		        response.code = 1;
 		        callback(true);
@@ -906,17 +906,17 @@ exports.addUser = function(req, res) {
 		function(callback)
 		{
 		    User
-		    .findOne({ email : data.email })
+		    .findOne({ username : data.username })
 		    .exec(function(err, retData)
 		    {
 	            if(retData === null)
 	            {
 	                data.password = bcrypt.hashSync(data.password, 12);
 
-					var token = bcrypt.hashSync(timestamp()+data.email,12);
+					var token = bcrypt.hashSync(timestamp()+data.username,12);
 
 	                newUser = new User({
-	                    email : data.email,
+	                    username : data.username,
 	                    password : data.password,
 	                    timestamp : timestamp(),
 	                    authenticationToken : token
@@ -966,7 +966,7 @@ exports.deleteAll = function(req, res) {
 /*
  * [PUT] UPDATE A USER
  *
- * @param String email OPT
+ * @param String username OPT
  * @param String password OPT
  * @return User data
  */

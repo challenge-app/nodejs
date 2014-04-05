@@ -9,9 +9,9 @@ controllers.push({
 			method: "POST",
 			params: [
 				[],
-				["email"],
-				["email","password"],
-				["email","password"],
+				["username"],
+				["username","password"],
+				["username","password"],
 			],
 			headers: [
 				[],
@@ -28,12 +28,12 @@ controllers.push({
 			description: "Will try to create a new <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
 			example: [
 				'[POST] URL /user',
-				'PARAMETERS { email : "abc@test.com", password : "123456" }',
+				'PARAMETERS { username : "gaduv1d4l0k4", password : "123456" }',
 				'HEADERS',
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com",
+					"username": "gaduv1d4l0k4",
 					"authenticationToken": "$2a$12$yvxdiZlYhdy7KF.wwH.J9eaeJ/UytKfsqfZ4FPt4ryoFbQdA24kDe",
 					"following": [],
 					"followers": []
@@ -63,13 +63,13 @@ controllers.push({
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com",
+					"username": "gaduv1d4l0k4",
 					"firstName": "ABC",
 					"following":
 					[
 						{
 							"_id": "5301336a7b1560e9012181d4",
-							"email": "mauricio.c.giordano@gmail.com",
+							"username": "maurimaster",
 							"firstName": "Mauricio",
 							"timestamp": "1395148847692"
 						}
@@ -107,6 +107,7 @@ controllers.push({
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
+					"username": "f0gd01der4",
 					"email": "abc@teste.com",
 					"firstName": "Bruno",
 					"lastName": "Lemos",
@@ -141,7 +142,7 @@ controllers.push({
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com",
+					"username": "gaduv1d4l0k4",
 					"count":
 					{
 						"following": 10,
@@ -278,10 +279,10 @@ controllers.push({
 			method: "POST",
 			params: [
 				[],
-				["email"],
-				["email"],
-				["email", "password"],
-				["email", "password"],
+				["username"],
+				["username"],
+				["username", "password"],
+				["username", "password"],
 			],
 			headers: [
 				[],
@@ -300,18 +301,18 @@ controllers.push({
 			description: "Will try to auth a <a href=\"#\" data-trigger=\"user-model\">User</a>.</p>",
 			example: [
 				'[POST] URL /user/auth',
-				'PARAMETERS { email : "abc@teste.com", password : "123456" }',
+				'PARAMETERS { username : "gaduv1d4l0k4", password : "123456" }',
 				'HEADERS',
 				'STATUS 200 OK',
 				{
 					"_id": "52e863d7fc1c741857d152f6",
-					"email": "abc@teste.com",
+					"username": "gaduv1d4l0k4",
 					"authenticationToken": "$2a$12$tL1ViLRmodnC1d4oAbFzIOYdd2BO5eutgdhI39OsqGVBnRWaF2E2O",
 					"followers": [],
 					"following": [
 						{
 							"_id": "5301336a7b1560e9012181d4",
-							"email": "mauricio.c.giordano@gmail.com",
+							"username": "f0gd01der4",
 							"timestamp": "1395148847692"
 						}
 					]

@@ -1,6 +1,6 @@
 var errors = [
 	{ code: 1,
-		description: "Missing parameter 'email'." },
+		description: "Missing parameter 'username'." },
 	{ code: 2,
 		description: "Missing parameter 'password'." },
 	{ code: 3,
